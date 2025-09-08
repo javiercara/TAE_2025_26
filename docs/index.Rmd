@@ -17,13 +17,10 @@ output:
 
 # Contenido
 
-## Introducción
+## Introducción al análisis de datos: el algoritmo KNN
 
 1. [Análisis descriptivo de los datos](descriptiva.html) [(pdf)](descriptiva.pdf) 
-
-## K-Nearest Neighbours
-
-1. [KNN para regresión](knn_reg.html) [(pdf)](knn_reg.pdf) 
+2. [KNN para el análisis de variables cuantitativas (regresión)](knn_reg.html) [(pdf)](knn_reg.pdf) 
 
 
 # Bibliografía

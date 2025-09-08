@@ -1,13 +1,13 @@
 ---
-title: "Algoritmo KNN para regresión"
+title: "KNN para el análisis de variables cuantitativas (regresión)"
 output: 
-  pdf_document:
-    number_sections: true
-    toc: true
   html_document:
     number_sections: true
     toc: true
     toc_float: true
+  pdf_document:
+    number_sections: true
+    toc: true
 ---
 
 # Predicción con un regresor
