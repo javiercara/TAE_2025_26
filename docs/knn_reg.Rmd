@@ -1,0 +1,243 @@
+---
+title: "Algoritmo KNN para regresión"
+output: 
+  pdf_document:
+    number_sections: true
+    toc: true
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+---
+
+# Predicción con un regresor
+
+El objetivo es predecir los valores que tomará una variable cuantitativa conocidos los valores de otra u otras variables. Por ejemplo, se quiere predecir el peso de los pingüinos si se conoce la longitud de su aleta. El peso es la **variable respuesta** y la longitud de la aleta es el **regresor** (también se conoce como variable independiente, cofactor, predictor,...). Cuando la variable respuesta es cuantitativa se suele denominar **problema de regresión**.
+
+```{r}
+## se leen los datos
+d = read.csv("datos/pinguinos.csv", sep = ";")
+# por simplicidad se utilizan solo 10 datos seleccionados de manera aleatoria
+set.seed(99)
+pos = runif(10, min = 1, max = nrow(d))
+# se seleccionan los 10 observaciones de la variable respuesta y el regresor
+d1 = d[pos,c("peso","long_aleta")]
+# gráfico de dispersion
+plot(d1$long_aleta, d1$peso)
+```
+
+En este caso se quiere predecir el peso de un pingüino cuya aleta mide 210 mm. Para ello se va a utilizar el algoritmo **K-Nearest Neighbors (KNN)**. La idea es calcular la predicción como la media de los k-valores más cercanos a 210 mm. Primero se calcula la distancia al regresor que se va a predecir:
+
+```{r}
+# se calcula la distancia y se guarda en d1
+d1$dist = abs(d1$long_aleta - 210)
+# se ordenan todas las observaciones de d1 en funcion de dist
+(orden1 = sort(d1$dist, index.return = T))
+```
+
+Ahora se ordenan los datos en función de la distancia al regresor predicho:
+
+```{r}
+(d1s = d1[orden1$ix,])
+```
+
+Ya se puede calcular la predicción:
+
+- Si K = 1 se utiliza el valor más cercano. Luego la predicción para el peso es `r d1s[1,1]` g. 
+- Si K = 2 la predicción es la media entre `r d1s[1,1]` y `r d1s[2,1]` = `r mean(d1s$peso[1:2])` g.
+- Si K = 3 la predicción es la media entre `r d1s[1,1]`, `r d1s[2,1]` y `r d1s[3,1]` = `r mean(d1s$peso[1:3])` g.
+- Y así para otros valores de K.
+
+# Predicción con m regresores
+
+Se quiere predecir el peso de un pingüino con long_pico = 40 mm, prof_pico = 18 mm y long_aleta = 210 mm, es decir, se tiene la información de tres regresores. En el caso de que se tengan dos o más regresores el algoritmo sigue siendo el mismo: la predicción es la media de los k valores más cercanos. En general se utiliza la distancia euclídea para calcular la distancia entre cada observación y los datos a predecir.
+
+$$
+x = (x_1,x_2,...,x_m), \quad y = (y_1,y_2,...,y_m)
+$$
+
+$$
+d(x,y) = \sqrt{(x_1-y_1)^2 + (x_2-y_2)^2 + \cdots + (x_m-y_m)^2}
+$$
+
+```{r}
+# funcion que calcula la distancia euclidea entre los vectores x e y
+knn_dist = function(x,y){
+  dist = sqrt(sum((x-y)^2))
+  return(dist)
+}
+```
+
+Con la función anterior se calcula la distancia entre los regresores y el dato a predecir:
+
+```{r}
+# se seleccionan los regresores correspondientes
+d2 = d[pos,c("peso","long_pico","prof_pico","long_aleta")]
+# regresor a predecir
+xp2 = c(40,18,210)
+# se calculan las distancias
+d2$dist = 0
+for (ii in 1:10){
+  xii = d2[ii,2:4]
+  d2$dist[ii] = knn_dist(xii,xp2)
+}
+```
+
+Ahora se ordenan los datos en función de la distancia al regresor predicho:
+
+```{r}
+orden2 = sort(d2$dist, index.return = T)
+(d2s = d2[orden2$ix,])
+```
+
+- Si K = 1 la predicción para el peso es `r d2s[1,1]` g. 
+- Si K = 2 la predicción es la media entre `r d2s[1,1]` y `r d2s[2,1]` = `r mean(d2s$peso[1:2])` g.
+- Si K = 3 la predicción es la media entre `r d2s[1,1]`, `r d2s[2,1]` y `r d2s[3,1]` = `r mean(d2s$peso[1:3])` g.
+- Y así sucesivamente.
+
+# Normalización de los regresores
+
+En el ejemplo anterios se han utilizado 3 variables para calcular la distancia:
+
+- long_pico, que toma valores en torno a 40 mm;
+- prof_pico, que toma valores alrededor de 20 mm;
+- long_aleta, con valores alrededor de 200 mm.
+
+Por tanto, la longitud de la aleta va a tener más influencia en la magnitud de la distancia que las otras dos variables. En cierta manera se desperdicia la información aportada por long_pico y prof_pico. Por ello se suelen normalizar los regresores, de manera que todos ellos aporten información en las mismas condiciones. La manera tradicional de reescalar variables en KNN es la normalización min-max. Este proceso transforma una variable cualquiera de manera que pasa a tomar valores en el rango 0-1. La fórmula que consigue dicha transformación es:
+
+$$
+x = (x_1,x_2,...,x_m) \Rightarrow x^* = (x_1^*,x_2^*,...,x_m^*)
+$$
+
+$$
+x_i^* = \frac{x_i - min(x)}{max(x) - min(x)}
+$$
+
+Con esta transformación se consique que $min(x^*) = 0$ y $max(x^*) = 1$.
+
+Se va a repetir el ejemplo anterior pero con las variables normalizadas entre 0 y 1. Primero se define la función de normalización:
+
+```{r}
+knn_normaliza  = function(x){
+  x1 = (x - min(x))/(max(x) - min(x))
+  return(x1)
+}
+```
+
+Se normaliza:
+
+```{r}
+# se crea la base de datos
+d3 = d[pos,c("peso","long_pico","prof_pico","long_aleta")]
+# se incluyen los regresores normalizados
+d3$long_pico1 = knn_normaliza(d3$long_pico)
+d3$prof_pico1 = knn_normaliza(d3$prof_pico)
+d3$long_aleta1 = knn_normaliza(d3$long_aleta)
+```
+
+También se tiene que normalizar el dato que se quiere predecir:
+
+```{r}
+xp3 = c(0,0,0)
+xp3[1] = (40 - min(d3$long_pico))/(max(d3$long_pico) - min(d3$long_pico))
+xp3[2] = (18 - min(d3$prof_pico))/(max(d3$prof_pico) - min(d3$prof_pico))
+xp3[3] = (210 - min(d3$long_aleta))/(max(d3$long_aleta) - min(d3$long_aleta))
+xp3
+```
+
+Y ahora se calculan las distancias y se ordena:
+
+```{r}
+d3$dist = 0
+for (ii in 1:10){
+  xii = d3[ii,5:7]
+  d3$dist[ii] = knn_dist(xii,xp3)
+}
+orden3 = sort(d3$dist, index.return = T)
+(d3s = d3[orden3$ix,])
+```
+
+- Si K = 1 la predicción para el peso es `r d3s[1,1]` g. 
+- Si K = 2 la predicción es la media entre `r d3s[1,1]` y `r d3s[2,1]` = `r mean(d3s$peso[1:2])` g.
+- Si K = 3 la predicción es la media entre `r d3s[1,1]`, `r d3s[2,1]` y `r d3s[3,1]` = `r mean(d3s$peso[1:3])` g.
+
+# Regresores cualitativos
+
+La variable respuesta obligatoriamente tiene que ser cuantitativa ya que estamos en un problema de regresión. Hasta el momento sólo hemos utilizado regresores cuantitativos pero también pueden ser cualitativos. Por ejemplo, se va a introducir en el análisis el regresor *especie*. En este caso se quiere predecir el peso de un pingüino con long_pico = 40 mm, prof_pico = 18 mm, long_aleta = 210 mm y especie = Gentoo. Para poder aplicar el algoritmo KNN se necesita calcular la distancia entre los datos: ¿como se calcula la distancia entre Adelie, Gentoo y Chinstrap? La solución consiste en introducir variables auxiliares 0-1. Se van a crear tres variables auxiliares, una por nivel de la variable factor: Adelie1, Gentoo1 y Chinstrap1.
+
+- Adelie1 = 1 si especie = Adelie, y Adelie1 = 0 si especie $\neq$ Adelie.
+- Chinstrap1 = 1 si especie = Chinstrap, y Chinstrap1 = 0 si especie $\neq$ Chinstrap.
+- Gentoo1 = 1 si especie = Gentoo, y Gentoo1 = 0 si especie $\neq$ Gentoo.
+
+Por tanto, el dato que se quiere predecir es:
+
+```{r}
+# se crea el dato a predecir. Los valores corresponden a:
+# long_pico, prof_pico, long_aleta, Adelie1, Chinstrap1, Gentoo1
+(xp4 = c(xp3,0,0,1))
+```
+
+Se crea la base de datos:
+
+```{r}
+# tomamos las variables que ya están normalizadas
+d4 = d3[,c("peso","long_pico1","prof_pico1","long_aleta1")]
+# y se añade el factor especie
+d4$especie = factor(d$especie[pos])
+```
+
+```{r}
+# se añaden las variables auxiliares:
+d4$Adelie1 = ifelse(d4$especie == "Adelie", 1,0)
+d4$Chinstrap1 = ifelse(d4$especie == "Chinstrap", 1,0)
+d4$Gentoo1 = ifelse(d4$especie == "Gentoo", 1,0)
+```
+
+No es necesario escalar estas variables porque ya están en el rango 0-1. Se calculan las distancias y se ordena:
+
+```{r}
+d4$dist = 0
+for (ii in 1:10){
+  xii = d4[ii,c(2,3,4,6,7,8)]
+  d4$dist[ii] = knn_dist(xii,xp4)
+}
+orden4 = sort(d4$dist, index.return = T)
+(d4s = d4[orden4$ix,])
+```
+
+- Si K = 1 la predicción para el peso es `r d4s[1,1]` g. 
+- Si K = 2 la predicción es la media entre `r d4s[1,1]` y `r d4s[2,1]` = `r mean(d4s$peso[1:2])` g.
+- Si K = 3 la predicción es la media entre `r d4s[1,1]`, `r d4s[2,1]` y `r d4s[3,1]` = `r mean(d4s$peso[1:3])` g.
+
+# Regresores cualitativos-2
+
+En realidad no es necesario utilizar las tres variables auxiliares, con dos de ellas es suficiente. Por ejemplo, se va a utilizar Adelie1 y Chinstrap1:
+
+- Los pinguinos Adelie se indican como (Adelie1=1, Chinstrap1=0);
+- Los pinguinos Chinstrap como (Adelie1=0, Chinstrap1=1);
+- Y los pinguinos Gentoo como (Adelie1=0, Chinstrap1=0);
+
+Para comprobarlo se va a repetir el apartado anterior utilizando solo esas dos variables auxiliares:
+
+```{r}
+# se crea el dato a predecir:
+(xp5 = c(xp3,0,0))
+```
+
+```{r}
+# Se crea la base de datos:
+d5 = d4[,c("peso","long_pico1","prof_pico1","long_aleta1","Adelie1","Chinstrap1")]
+```
+
+```{r}
+# Se calculan las distancias y se ordena:
+d5$dist = 0
+for (ii in 1:10){
+  xii = d5[ii,c(2:6)]
+  d5$dist[ii] = knn_dist(xii,xp5)
+}
+orden5 = sort(d5$dist, index.return = T)
+(d5s = d5[orden5$ix,])
+```
+
+

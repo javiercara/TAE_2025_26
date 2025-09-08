@@ -1,0 +1,124 @@
+---
+title: "Análisis descriptivo de los datos"
+output: 
+  pdf_document:
+    number_sections: true
+    toc: true
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+---
+
+# Introducción
+
+El archivo **pinguinos.csv** contiene los datos de 333 pingüinos del archipiélago Palmer, en la Antártida. En concreto, el archivo consta de 7 columnas:
+
+- especie: especie del pingüino (Chinstrap, Adelie, Gentoo)
+- long_pico: longitud del pico (mm)
+- prof_pico: medida de la parte más ancha del pico (mm)
+- long_ala: longitud del ala (mm)
+- peso: peso del pinguino (g)
+- isla: nombre de la isla donde se recogió al pingüino (Dream, Torgersen, Biscoe)
+- genero: genero del pingüino (hembra, macho)
+
+![Especies de pinguinos](imagenes/pinguinos1b.png)
+Cada columna del archivo corresponde a una **variable**, y cada fila corresponde a una **observación** de dichas variables. Por tanto, tenemos 7 variables y 333 observaciones.
+
+Las variables son de dos tipos:
+
+- cualitativas: especie, isla y género.
+- cuantitativas: long_pico, prof_pico, long_ala y peso.
+
+# Análisis de variables cualitativas
+
+Las variables cualitativas se denominan **factores** en R. Y los posibles valores que puede tomar cada variable cualitativa se llaman **niveles del factor**. Por ejemplo, los niveles de especie son: Chinstrap, Adelie, Gentoo.
+
+En general R no declara automáticamente los factores, por lo que el primer paso es definirlos:
+
+```{r}
+# se leen los datos
+d = read.csv("datos/pinguinos.csv", sep = ";")
+# se muestra la estructura de la variable d: tipo de dato, tamaño, contenido,...
+str(d)
+```
+
+Como se observa, especie, isla y genero son de tipo carácter (chr) y no son factores. Por tanto se convierten a factor:
+
+```{r}
+# se define como factor y lo se guarda en genero1
+d$genero1 = factor(d$genero)
+head(d)
+```
+
+La variable no ha cambiado, solo la manera en que se define. Lo habitual es guardarlas en la variable de origen para no duplicar información:
+
+```{r}
+d$especie = factor(d$especie)
+d$isla = factor(d$isla)
+```
+
+Ya se puede realizar un análisis descriptivo de las variables. En primer lugar se van a contar cuantos pingüinos hay de cada especie:
+
+```{r}
+(t = table(d$especie))
+```
+
+De manera gráfica:
+
+```{r}
+barplot(t)
+```
+
+También se pueden calcular proporciones:
+
+```{r}
+prop.table(t)
+```
+
+También es posible trabajar con dos variables:
+
+```{r}
+(t1 = table(d$especie, d$isla))
+```
+
+# Análisis de variables cuantitativas
+
+El resto de variables son cuantitativas. Por ejemplo, si se analiza la variable peso. 
+
+```{r}
+# minimo
+min(d$peso)
+# maximo
+max(d$peso)
+# media
+mean(d$peso)
+# mediana
+median(d$peso)
+# desviacion típica
+sd(d$peso)
+```
+
+El gráfico más importante es el histograma ya que indica el rango de la variable y como se distribuyen sus valores:
+
+```{r}
+hist(d$peso)
+```
+
+Cuando se tienen dos variables cuantivativas se puede dibujar el gráfico de dispersión para ver la relación entre ambas:
+
+```{r}
+plot(d$long_aleta, d$peso)
+```
+
+De manera analítica se puede calcular la covarianza o el coeficiente de correlación lineal:
+
+```{r}
+# covarianza
+cov(d$long_aleta, d$peso)
+# coef. correlación
+cor(d$long_aleta, d$peso)
+```
+
+El valor de la covarianza depende de las unidades de las variables: un valor alto o bajo es difícil de interpretar. Sin embargo, el coeficiente de correlación lineal toma valores entre -1 y 1. En este caso, 0.873 indica una correlación positiva (a mayor longitud de aleta, mayor peso) y alta (la longitud de la aleta es un buen indicador del peso).
+

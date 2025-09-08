@@ -1,0 +1,58 @@
+---
+title: "Técnicas Avanzadas de Estadística"
+author: "[Javier Cara](https://www.javiercara.com/)"
+date: "curso 2025-26"
+output: 
+  html_document:
+    number_sections: true
+    toc: false
+    toc_depth: 2
+  pdf_document:
+    toc: false
+---
+
+<br>
+
+***
+
+# Contenido
+
+## Introducción
+
+1. [Análisis descriptivo de los datos](descriptiva.html) [(pdf)](descriptiva.pdf) 
+
+## K-Nearest Neighbours
+
+1. [KNN para regresión](knn_reg.html) [(pdf)](knn_reg.pdf) 
+
+
+# Bibliografía
+
+Los libros utilizados en la redacción de estos apuntes han sido, fundamentalmente:
+
+- **[Faraway2014]** Linear models with R. Julian J. Faraway. Chapman and Hall/CRC. Edicion 2, 2014.
+- **[Gelman2007]** Data Analysis Using Regression and Multilevel/Hierarchical Models. Andrew Gelman, Jennifer Hill. Cambridge University Press. 2007.
+- **[James2017]** An Introduction to Statistical Learning: with Applications in R. Gareth James, Daniela Witten, Trevor Hastie and Rob Tibshirani. Springer, 2017.
+- **[Montgomery2013]** Introduction to Linear Regression Analysis. Douglas Montgomery, Elisabeth Peck, Geofrey Vining . Editorial Wiley-Blackwell, Edicion 5, 2013.
+- **[Peña2010]** Regresión y diseño de experimentos. Daniel Peña. Alianza Editorial, 2010.
+- **[Sheather2009]** A modern approach to regression with R. Simon J. Sheather. Springer tests in Statistics, 2009.
+
+# Archivos de datos
+
+- [pinguinos.csv](datos/pinguinos.csv)
+- [Advertising.csv](datos/Advertising.csv). Mas información en [James2017].
+- [cerezos.txt](datos/cerezos.txt)
+- [coches.txt](datos/coches.txt)
+- [kidiq.csv](datos/kidiq.csv). Mas información en [Gelman2007].
+- [Hitters.csv](datos/Hitters.csv). Mas información en [James2017].
+- [Wage.csv](datos/Wage.csv). Mas información en [James2017].
+
+# Funciones
+
+- [cross_val_pos()](funciones/cross_val_pos.R).
+- [MSE()](funciones/MSE.R)
+- [predict.regsubsets()](funciones/regsubsets_predict.R).
+
+
+
+<br>
