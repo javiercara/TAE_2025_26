@@ -1,0 +1,307 @@
+---
+title: "KNN para el análisis de variables cuantitativas con R"
+output: 
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+  pdf_document:
+    number_sections: true
+    toc: true
+---
+
+# Introducción
+
+Se quiere predecir el peso de dos pingüinos con las siguientes características:
+
+```{r}
+xp = data.frame(
+  especie = factor(c("Adelie","Gentoo"), levels = c("Adelie","Chinstrap","Gentoo")),
+  isla = factor(c("Dream","Biscoe"), levels = c("Biscoe","Dream","Torgersen")), 
+  long_pico = c(39.8,46.1), 
+  prof_pico = c(18.4,15.5),
+  long_aleta = c(192,202), 
+  genero = factor(c("hembra","macho"))
+)
+xp
+```
+
+utilizando los datos del archivo pinguinos.csv y el algoritmo KNN.
+
+# Lectura y preparación de los datos
+
+En primer lugar se leen los datos y se crean los factores correspondientes
+
+```{r}
+## se leen los datos
+d = read.csv("datos/pinguinos.csv", sep = ";")
+```
+
+```{r}
+# es conveniente convertir a factores las variables cualitativas
+d$especie = factor(d$especie)
+d$isla = factor(d$isla)
+d$genero = factor(d$genero)
+```
+
+- Se normalizan los regresores numéricos ([descargar knn_funciones.R](funciones/knn_funciones.R)):
+
+```{r}
+# se lee la funcion que normaliza
+source("funciones/knn_funciones.R")
+```
+
+```{r}
+# se normalizan y se guardan en un data.frame
+d1 = data.frame(
+  long_pico = knn_normaliza(d$long_pico),
+  prof_pico = knn_normaliza(d$prof_pico), 
+  long_aleta = knn_normaliza(d$long_aleta)
+)
+```
+
+- Se definen las variables auxiliares. En este caso se deciden utilizar tantas variables auxiliares como niveles del factor:
+
+```{r}
+d1$especie_Ade = ifelse(d$especie == "Adelie", 1, 0)
+d1$especie_Chi = ifelse(d$especie == "Chinstrap", 1, 0)
+d1$especie_Gen = ifelse(d$especie == "Gentoo", 1, 0)
+#
+d1$isla_Bis = ifelse(d$isla == "Biscoe", 1, 0)
+d1$isla_Dre = ifelse(d$isla == "Dream", 1, 0)
+d1$isla_Tor = ifelse(d$isla == "Torgersen", 1, 0)
+#
+d1$genero_H = ifelse(d$genero == "hembra", 1, 0)
+d1$genero_M = ifelse(d$genero == "macho", 1, 0)
+```
+
+- Se preparan los valores que se quieren predecir:
+
+```{r}
+# variables cuantitativas normalizadas
+xp1 = data.frame(
+  long_pico = knn_normaliza(xp$long_pico, min(d$long_pico), max(d$long_pico)),
+  prof_pico = knn_normaliza(xp$prof_pico, min(d$prof_pico), max(d$prof_pico)),
+  long_aleta = knn_normaliza(xp$long_aleta, min(d$long_aleta), max(d$long_aleta))
+)
+# variables auxiliares
+xp1$especie_Ade = ifelse(xp$especie == "Adelie", 1, 0)
+xp1$especie_Chi = ifelse(xp$especie == "Chinstrap", 1, 0)
+xp1$especie_Gen = ifelse(xp$especie == "Gentoo", 1, 0)
+#
+xp1$isla_Bis = ifelse(xp$isla == "Biscoe", 1, 0)
+xp1$isla_Dre = ifelse(xp$isla == "Dream", 1, 0)
+xp1$isla_Tor = ifelse(xp$isla == "Torgersen", 1, 0)
+#
+xp1$genero_H = ifelse(xp$genero == "hembra", 1, 0)
+xp1$genero_M = ifelse(xp1$genero == "macho", 1, 0)
+```
+
+# Algoritmo KNN con R
+
+Para aplicar el algoritmo se va a utilizar el paquete FNN de R. Este paquete no viene instalado por defecto, por lo que hay que instalarlo y activarlo para poder usar las funciones incluidas en dicho paquete:
+
+```{r}
+# se instala el paquete
+# install.packages("FNN")
+# se activa el paquete
+# library(FNN)
+```
+
+Otra alternativa es utilizar las funciones mediante la forma **paquete::funcion**. En este caso, para k = 1 la predicción es:
+
+```{r}
+# se utiliza la funcion knn.reg del paquete FNN
+yp = FNN::knn.reg(d1, test = xp1, y = d$peso, k = 1)
+yp$pred
+```
+
+# Calcular el mejor valor de K
+
+## Método de los datos de entrenamiento y datos test
+
+- Se dividen los datos en dos partes: datos de entrenamiento y datos test. Esta división suele ser aleatoria. El tamaño de los datos de entrenamiento tiene que ser mayor (80%-20%, 70%-30%,...).
+- Para varios valores de k:
+    - En el **training set** se estima el modelo.
+    - En el **test set** se predice la respuesta y se calcula el error entre la variable respuesta observada $y_i$ y la predicha $\hat y_i$. Para calcular el error se puede utilizar, por ejemplo, el Error Cuadrático Medio (ECM)
+
+$$
+ECM = \frac{1}{n}\sum _{i=1}^{n}{(y_i - \hat y_i)^2}
+$$
+
+o la raíz del error cuadrático medio (es preferible porque tiene las mismas unidades que la variable respuesta):
+
+$$
+RECM = \sqrt{\frac{1}{n}\sum _{i=1}^{n}{(y_i - \hat y_i)^2}}
+$$
+
+- Se elige el valor de k con el menor error de predicción en el test set.
+
+```{r}
+# se crean los datos de entrenamiento y los datos test (80%-20%)
+set.seed(123)
+n = nrow(d)
+pos_train = sample(1:n,round(0.8*n), replace = F)
+train_x = d1[pos_train,]
+test_x = d1[-pos_train,]
+train_y = d$peso[pos_train]
+test_y = d$peso[-pos_train]
+```
+
+```{r}
+# se utiliza la funcion knn.reg del paquete FNN
+yp = FNN::knn.reg(train_x, test = test_x, y = train_y, k = 1)
+# se calcula el error con RECM
+error = test_y - yp$pred
+sqrt(mean(error^2))
+```
+
+```{r}
+# se calcula el error para distintos valores de k y se elige el que tenga menor error
+recm = rep(0,20)
+for (ii in 1:20){
+  yp = FNN::knn.reg(train_x, test = test_x, y = train_y, k = ii)
+  error = test_y - yp$pred
+  recm[ii] = sqrt(mean(error^2))
+}
+```
+
+```{r}
+plot(1:20,recm, type = "b")
+```
+
+A partir de k = 10 el error se estabiliza, luego elegimos este valor para calcular la predicción final: 
+
+```{r}
+# se utilizan todos los datos
+yp = FNN::knn.reg(d1, test = xp1, y = d$peso, k = 10)
+yp$pred
+```
+
+## Método de validacion cruzada
+
+### Definición
+
+Se dividen aleatoriamente los datos en **S** subconjuntos de datos. Cada subconjunto tendrá, por tanto, n1 = n/S datos.
+
+- Para  i = 1:S
+    - el subconjunto i constituye el test set.
+    - los otros subconjuntos constituyen el train set.
+    - se estima el modelo en el train set y se predice la variable respuesta en el test set.
+    - se calcula el error de predicción en el test set: $ECM_i$ (en caso de utilizar el error cuadrático medio).
+- El error total calculado con validación cruzada es la media de todos los subconjuntos:
+
+$$
+ECM_{TOTAL} = \frac{1}{S} \sum _{i=1}^S ECM_i
+$$
+
+### Leave-one-out cross validation
+
+La opción más sencilla de aplicar validación cruzada es cuando *S = n* lo que va a generar *n* subconjuntos train de tamaño *n-1* y *n* subconjuntos test de tamaño 1. Por ejemplo, se tenemos tres datos (1,2,3), los subconjutos train-test serían: (1,2)-(3), (1,3)-(2), (2,3)-(1). A esta forma de organizar la validación cruzada se le conoce como **Leave one out cross-validation**. 
+
+```{r}
+# segun la ayuda, si no se proporciona el test set entonces knn.reg aplica Leave one out cross-validation
+yp = FNN::knn.reg(d1, y = d$peso, k = 1)
+str(yp)
+```
+
+- Se generan 333 predicciones ya que S = 333.
+- Y por tanto 333 errores de predicción (residuos).
+- El error se mide con la suma de los residuos al cuadrado (PRESS):
+
+```{r}
+sum(yp$residuals^2)
+```
+
+- Y también se mide con el R-cuadrado:
+
+$$
+R^2 = 1 - \frac{\sum res_i^2}{\sum (y_i-\bar y)^2}
+$$
+
+- Cuando $R^2 \approx 1 \Rightarrow$, los residuos son muy pequeños, la predicción es buena.
+- Cuando $R^2 \approx 0 \Rightarrow$ los errores son tan grandes como los datos predichos, la predicción es mala.
+
+```{r}
+1 - sum(yp$residuals^2)/((n-1)*var(d$peso))
+```
+
+- Podemos utilizar este resultado para calcular el mejor valor de k:
+
+```{r}
+error = rep(0,20)
+for (ii in 1:20){
+  yp = FNN::knn.reg(d1, y = d$peso, k = ii)
+  error[ii] = yp$PRESS
+}
+```
+
+```{r}
+plot(1:20,error, type = "b")
+```
+
+A partir de k= 9 el error se estabiliza, luego elegimos este valor. Ahora se puede calcular la predicción final:
+
+```{r}
+# se utilizan todos los datos
+yp = FNN::knn.reg(d1, test = xp1, y = d$peso, k = 9)
+yp$pred
+```
+
+## Validación cruzada con m subconjuntos de datos
+
+Otra opción es utilizar validación cruzada con un número menor de subconjuntos, por ejemplo, 5 subconjuntos. Se ha programado una funcion que calcula las posiciones de train y test dado el número de subconjuntos ([descargar](funciones/validacion_cruzada.R)):
+
+```{r}
+source("funciones/validacion_cruzada.R")
+validacion_cruz_pos # se muestra el contenido de la función
+```
+
+Por ejemplo, supongamos que tenemos 10 datos y definimos 3 folds:
+
+```{r}
+set.seed(342)
+num_datos = 10
+num_sub = 3
+validacion_cruz_pos(num_datos,num_sub)
+```
+
+Con dicha función se puede utilizar validación cruzada con 5 subconjuntos para calcular el k óptimo:
+
+```{r}
+set.seed(111)
+
+# numero de sub
+num_sub = 5
+n = nrow(d)
+
+# se definen las posiciones de test de cada subconj
+pos = validacion_cruz_pos(n,num_sub)
+
+error_i = rep(0,20)
+for (i in 1:20){
+  error_j = rep(0,num_sub)
+  for (j in 1:num_sub){
+    # datos de training y de test de cada fold
+    pos_test = pos$test[[j]]
+    pos_train = pos$train[[j]]
+    train = d1[pos_train,]
+    test = d1[pos_test,]
+    
+    # knn
+    yp = FNN::knn.reg(train, test, y = d$peso[pos_train], k = i)
+    
+    # error de prediccion
+    yi = d$peso[pos_test]
+    yi_p = yp$pred
+    error_j[j] = sqrt(mean((yi-yi_p)^2)) # RECM 
+  }
+  error_i[i] = mean(error_j)
+}
+```
+
+```{r}
+plot(1:20,error_i, type = "b")
+```
+
+Como se observa, también se puede elegir k = 9, k = 10.

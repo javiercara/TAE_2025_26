@@ -1,13 +1,13 @@
 ---
 title: "KNN para el análisis de variables cuantitativas (regresión)"
 output: 
+  pdf_document:
+    number_sections: true
+    toc: true
   html_document:
     number_sections: true
     toc: true
     toc_float: true
-  pdf_document:
-    number_sections: true
-    toc: true
 ---
 
 # Predicción con un regresor
@@ -61,8 +61,8 @@ d(x,y) = \sqrt{(x_1-y_1)^2 + (x_2-y_2)^2 + \cdots + (x_m-y_m)^2}
 $$
 
 ```{r}
-# funcion que calcula la distancia euclidea entre los vectores x e y
 knn_dist = function(x,y){
+  # funcion que calcula la distancia euclidea entre los vectores x e y
   dist = sqrt(sum((x-y)^2))
   return(dist)
 }
@@ -118,8 +118,10 @@ Con esta transformación se consique que $min(x^*) = 0$ y $max(x^*) = 1$.
 Se va a repetir el ejemplo anterior pero con las variables normalizadas entre 0 y 1. Primero se define la función de normalización:
 
 ```{r}
-knn_normaliza  = function(x){
-  x1 = (x - min(x))/(max(x) - min(x))
+knn_normaliza  = function(x, min_x = min(x), max_x = max(x)){
+  # knn_normaliza(x,min_x,max_x): se normaliza x utilizando min_x y max_x
+  # knn_normaliza(x): se normaliza x utilizando el min y el max de x
+  x1 = (x - min_x)/(max_x - min_x)
   return(x1)
 }
 ```
@@ -139,9 +141,9 @@ También se tiene que normalizar el dato que se quiere predecir:
 
 ```{r}
 xp3 = c(0,0,0)
-xp3[1] = (40 - min(d3$long_pico))/(max(d3$long_pico) - min(d3$long_pico))
-xp3[2] = (18 - min(d3$prof_pico))/(max(d3$prof_pico) - min(d3$prof_pico))
-xp3[3] = (210 - min(d3$long_aleta))/(max(d3$long_aleta) - min(d3$long_aleta))
+xp3[1] = knn_normaliza(40, min(d3$long_pico),max(d3$long_pico))
+xp3[2] = knn_normaliza(18, min(d3$prof_pico), max(d3$prof_pico))
+xp3[3] = knn_normaliza(210, min(d3$long_aleta), max(d3$long_aleta))
 xp3
 ```
 

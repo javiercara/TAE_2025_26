@@ -12,7 +12,7 @@ output:
 
 # Introducción
 
-El archivo **pinguinos.csv** contiene los datos de 333 pingüinos del archipiélago Palmer, en la Antártida. En concreto, el archivo consta de 7 columnas:
+El archivo [pinguinos.csv](datos/pinguinos.csv) contiene los datos de 333 pingüinos del archipiélago Palmer, en la Antártida. En concreto, el archivo consta de 7 columnas:
 
 - especie: especie del pingüino (Chinstrap, Adelie, Gentoo)
 - long_pico: longitud del pico (mm)

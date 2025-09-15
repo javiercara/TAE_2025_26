@@ -20,7 +20,10 @@ output:
 ## Introducción al análisis de datos: el algoritmo KNN
 
 1. [Análisis descriptivo de los datos](descriptiva.html) [(pdf)](descriptiva.pdf) 
-2. [KNN para el análisis de variables cuantitativas (regresión)](knn_reg.html) [(pdf)](knn_reg.pdf) 
+2. [KNN para el análisis de variables cuantitativas (regresión)](knn_reg.html) [(pdf)](knn_reg.pdf)
+3. [KNN para el análisis de variables cuantitativas con R](knn_reg_R.html) [(pdf)](knn_reg_R.pdf)
+4. [KNN para el análisis de variables cualitativas (clasificación)](knn_clas.html) [(pdf)](knn_clas.pdf)
+5. [KNN para el análisis de variables cualitativas con R](knn_clas_R.html) [(pdf)](knn_clas_R.pdf)
 
 
 # Bibliografía
