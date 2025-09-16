@@ -14,14 +14,14 @@ output:
 
 Se quiere predecir el peso de dos pingüinos con las siguientes características:
 
-```{r}
+```{r echo=FALSE}
 xp = data.frame(
-  especie = factor(c("Adelie","Gentoo"), levels = c("Adelie","Chinstrap","Gentoo")),
-  isla = factor(c("Dream","Biscoe"), levels = c("Biscoe","Dream","Torgersen")), 
+  especie = c("Adelie","Gentoo"),
+  isla = c("Dream","Biscoe"), 
   long_pico = c(39.8,46.1), 
   prof_pico = c(18.4,15.5),
   long_aleta = c(192,202), 
-  genero = factor(c("hembra","macho"))
+  genero = c("hembra","macho")
 )
 xp
 ```
@@ -60,7 +60,7 @@ d1 = data.frame(
 )
 ```
 
-- Se definen las variables auxiliares. En este caso se deciden utilizar tantas variables auxiliares como niveles del factor:
+- Se definen las variables auxiliares. En este caso se decide utilizar tantas variables auxiliares como niveles del factor:
 
 ```{r}
 d1$especie_Ade = ifelse(d$especie == "Adelie", 1, 0)
@@ -80,21 +80,21 @@ d1$genero_M = ifelse(d$genero == "macho", 1, 0)
 ```{r}
 # variables cuantitativas normalizadas
 xp1 = data.frame(
-  long_pico = knn_normaliza(xp$long_pico, min(d$long_pico), max(d$long_pico)),
-  prof_pico = knn_normaliza(xp$prof_pico, min(d$prof_pico), max(d$prof_pico)),
-  long_aleta = knn_normaliza(xp$long_aleta, min(d$long_aleta), max(d$long_aleta))
+  long_pico = knn_normaliza(c(39.8,46.1), min(d$long_pico), max(d$long_pico)),
+  prof_pico = knn_normaliza(c(18.4,15.5), min(d$prof_pico), max(d$prof_pico)),
+  long_aleta = knn_normaliza(c(192,202), min(d$long_aleta), max(d$long_aleta))
 )
 # variables auxiliares
-xp1$especie_Ade = ifelse(xp$especie == "Adelie", 1, 0)
-xp1$especie_Chi = ifelse(xp$especie == "Chinstrap", 1, 0)
-xp1$especie_Gen = ifelse(xp$especie == "Gentoo", 1, 0)
+xp1$especie_Ade = c(1,0)
+xp1$especie_Chi = c(0,0)
+xp1$especie_Gen = c(0,1)
 #
-xp1$isla_Bis = ifelse(xp$isla == "Biscoe", 1, 0)
-xp1$isla_Dre = ifelse(xp$isla == "Dream", 1, 0)
-xp1$isla_Tor = ifelse(xp$isla == "Torgersen", 1, 0)
+xp1$isla_Bis = c(0,1)
+xp1$isla_Dre = c(1,0)
+xp1$isla_Tor = c(0,0)
 #
-xp1$genero_H = ifelse(xp$genero == "hembra", 1, 0)
-xp1$genero_M = ifelse(xp1$genero == "macho", 1, 0)
+xp1$genero_H = c(1,0)
+xp1$genero_M = c(0,1)
 ```
 
 # Algoritmo KNN con R
@@ -118,9 +118,9 @@ yp$pred
 
 # Calcular el mejor valor de K
 
-## Método de los datos de entrenamiento y datos test
+## Método del subconjunto de entrenamiento y el subconjunto de validación (train set - test set)
 
-- Se dividen los datos en dos partes: datos de entrenamiento y datos test. Esta división suele ser aleatoria. El tamaño de los datos de entrenamiento tiene que ser mayor (80%-20%, 70%-30%,...).
+- Se dividen los datos en dos partes: datos de entrenamiento y datos de validación. Esta división suele ser aleatoria. El tamaño de los datos de entrenamiento tiene que ser mayor (80%-20%, 70%-30%,...).
 - Para varios valores de k:
     - En el **training set** se estima el modelo.
     - En el **test set** se predice la respuesta y se calcula el error entre la variable respuesta observada $y_i$ y la predicha $\hat y_i$. Para calcular el error se puede utilizar, por ejemplo, el Error Cuadrático Medio (ECM)
@@ -209,6 +209,15 @@ str(yp)
 - Y por tanto 333 errores de predicción (residuos).
 - El error se mide con la suma de los residuos al cuadrado (PRESS):
 
+$$
+Residuos: \ e_i = y_i -  \hat{y}_i
+$$
+
+$$
+PRESS = \sum e_i^2
+$$
+
+
 ```{r}
 sum(yp$residuals^2)
 ```
@@ -216,7 +225,7 @@ sum(yp$residuals^2)
 - Y también se mide con el R-cuadrado:
 
 $$
-R^2 = 1 - \frac{\sum res_i^2}{\sum (y_i-\bar y)^2}
+R^2 = 1 - \frac{\sum e_i^2}{\sum (y_i-\bar y)^2}
 $$
 
 - Cuando $R^2 \approx 1 \Rightarrow$, los residuos son muy pequeños, la predicción es buena.
@@ -226,7 +235,7 @@ $$
 1 - sum(yp$residuals^2)/((n-1)*var(d$peso))
 ```
 
-- Podemos utilizar este resultado para calcular el mejor valor de k:
+- Por ejemplo, utilizando la suma de residuos al cuadrado como medida del error se puede calcular el mejor valor de k:
 
 ```{r}
 error = rep(0,20)

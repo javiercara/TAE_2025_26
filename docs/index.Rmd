@@ -19,13 +19,22 @@ output:
 
 ## Introducción al análisis de datos: el algoritmo KNN
 
-1. [Análisis descriptivo de los datos](descriptiva.html) [(pdf)](descriptiva.pdf) 
+1. [Análisis descriptivo de los datos](knn_descriptiva.html) [(pdf)](knn_descriptiva.pdf) 
 2. [KNN para el análisis de variables cuantitativas (regresión)](knn_reg.html) [(pdf)](knn_reg.pdf)
 3. [KNN para el análisis de variables cuantitativas con R](knn_reg_R.html) [(pdf)](knn_reg_R.pdf)
 4. [KNN para el análisis de variables cualitativas (clasificación)](knn_clas.html) [(pdf)](knn_clas.pdf)
 5. [KNN para el análisis de variables cualitativas con R](knn_clas_R.html) [(pdf)](knn_clas_R.pdf)
 
+## Regresión lineal
 
+1. Modelo de regresión lineal
+    a. [Modelo con un regresor](lm_modelo_1regresor.html) [(pdf)](lm_modelo_1regresor.pdf)
+    b. [Modelo con dos regresores](lm_modelo_2regresores.html) [(pdf)](lm_modelo_2regresores.pdf)
+    c. [Modelo con K regresores](lm_modelo_Kregresores.html) [(pdf)](lm_modelo_Kregresores.pdf)
+    d. [Estimación del modelo con la función lm](lm_modelo_lm.html) [(pdf)](lm_modelo_lm.pdf)
+    e. [Regresores cualitativos](lm_modelo_cualitativas.html) [(pdf)](lm_modelo_cualitativas.pdf)
+    
+    
 # Bibliografía
 
 Los libros utilizados en la redacción de estos apuntes han sido, fundamentalmente:

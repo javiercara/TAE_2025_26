@@ -1,0 +1,103 @@
+---
+title: "Modelo de regresión lineal"
+output: 
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+  pdf_document:
+    number_sections: true
+    toc: true
+---
+
+
+# Introducción
+
+Vamos a leer el archivo de datos *kidiq.csv*:
+
+```{r}
+d = read.csv("datos/kidiq.csv")
+str(d)
+```
+
+donde se recogen datos de las siguientes variables:
+
+- **kid_score**    : puntuacion de un test cognitivo en niños de 3-4 años
+- **mom_hs**       :
+    - mom_hs = 1 : las madres han terminado secundaria (high school)
+    - mom_hs = 0 : las madres no terminaron secundaria
+- **mom_iq**       : puntuación de la madre en otro test cognitivo
+- **mom_work**     :
+    - mom_work = 1 : la madre no trabajó en los primeros tres años del niño
+    - mom_work = 2 : la madre trabajó en el segundo o tercer año
+    - mom_work = 3 : la madre trabajó a tiempo parcial el primer año
+    - mom_work = 4 : la madre trabajó a tiempo completo el primer año
+- **mom_age**      : edad de la madre
+
+Estamos interesados en estudiar si la puntuación obtenida por los niños (variable *kid_score*) está relacionada con las otras variables. Luego:
+
+- La variable respuesta es numérica, cuantitaviva.
+- Los regresores son de dos tipos: cuantitativos (mom_iq, mom_age) y cualitativos (mom_hs, mom_work).
+- Los factores cualitativos se tienen que representar como factores:
+
+```{r}
+d$mom_hs = factor(d$mom_hs, labels = c("no", "si"))
+d$mom_work = factor(d$mom_work, labels = c("notrabaja", "trabaja23", "trabaja1p", "trabaja1c"))
+```
+
+Se guardan en formato Rdata ya que se van a utilizar mucho:
+
+```{r}
+save(d,file="datos/kidiq.Rdata")
+# para leer estos datos: load(kidiq.Rdata)
+```
+
+# Análisis descriptivo de las variables cualitativas
+
+```{r}
+(t1 = table(d$mom_hs))
+```
+
+```{r}
+(t2 = table(d$mom_work))
+```
+
+```{r}
+t3 = table(d$mom_hs,d$mom_work)
+addmargins(t3)
+```
+
+```{r}
+barplot(t3, beside = T)
+```
+
+# Análisis descriptivo de las variables cuantitativas
+
+```{r}
+summary(d[,c("kid_score","mom_iq","mom_age")])
+```
+
+```{r}
+hist(d$kid_score)
+```
+
+```{r}
+hist(d$mom_iq)
+```
+
+```{r}
+hist(d$mom_age)
+```
+
+```{r}
+plot(d$mom_iq,d$kid_score)
+```
+
+```{r}
+plot(d$mom_age,d$kid_score)
+```
+
+
+Parece que hay cierta relación lineal entre kid_score y mom_iq. Sin enmbargo, no está clara dicha relación entre kid_score y mom_age.
+
+
