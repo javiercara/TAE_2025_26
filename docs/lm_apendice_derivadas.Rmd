@@ -1,0 +1,65 @@
+---
+title: "Derivada de una función escalar respecto de un vector"
+output: 
+  html_document:
+    number_sections: true
+    toc: true
+  pdf_document:
+    number_sections: true
+    toc: true
+---
+
+Sea $x$ un vector de n variables $x = [x_1 \ x_2 \ \cdots \ x_n]^T \in \mathbb{R}^{n \times 1}$, y sea la función real de las n variables $y(x_1, x_2, \cdots, x_n) \in \mathbb{R}$. Es decir:
+
+$$
+(x_1, x_2, \cdots, x_n) \in \mathbb{R}^n \longrightarrow y\in \mathbb{R}
+$$
+
+Se define la siguiente derivada:
+
+\begin{equation}
+\frac{d y}{d x} = 
+\begin{bmatrix}
+\frac{d y}{d x_1} \\ \frac{d y}{d x_2} \\ \cdots \\ \frac{d y}{d x_n} 
+\end{bmatrix}
+\end{equation}
+
+Se pueden demostrar las siguientes propiedades:
+
+\begin{equation}
+\frac{d(a^T x)}{d x} = \frac{d(x^T a)}{d x} = a
+\end{equation}
+
+\begin{equation}
+\frac{d(x^T A x)}{d x} = (A + A^T)x
+\end{equation}
+
+donde $a \in \mathbb{R}^{n \times 1}$ es un vector de números reales y $A \in \mathbb{R}^{n \times n}$ es una matriz de números reales.
+
+Se va a demostrar brevemente la primera igualdad:
+
+$$
+a = \begin{bmatrix}
+a_1 \\ a_2 \\ \cdots \\ a_n
+\end{bmatrix},
+x = \begin{bmatrix}
+x_1 \\ x_2 \\ \cdots \\ x_n
+\end{bmatrix}
+\Rightarrow 
+y = a^T x = a_1 x_1 + a_2 x_2 + \cdots + a_n x_n
+$$
+
+
+$$
+\frac{d y}{d x} = 
+\begin{bmatrix}
+\frac{d y}{d x_1} \\ \frac{d y}{d x_2} \\ \cdots \\ \frac{d y}{d x_n} 
+\end{bmatrix}
+=
+\begin{bmatrix}
+a_1 \\ a_2 \\ \cdots \\ a_n
+\end{bmatrix}
+= a
+$$
+
+La demostración del resto de igualdades es similar.

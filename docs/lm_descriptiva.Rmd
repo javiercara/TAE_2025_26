@@ -1,5 +1,5 @@
 ---
-title: "Modelo de regresión lineal"
+title: "Modelo de regresión lineal: análisis descriptivo de los datos"
 output: 
   html_document:
     number_sections: true
