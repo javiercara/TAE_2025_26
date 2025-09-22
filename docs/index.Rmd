@@ -34,7 +34,11 @@ output:
     d. [Estimación del modelo con la función lm](lm_modelo_lm.html) [(pdf)](lm_modelo_lm.pdf)
     e. [Regresores cualitativos](lm_modelo_cualitativas.html) [(pdf)](lm_modelo_cualitativas.pdf)
     
-    
+10. Apéndices
+    a. [Derivada de un escalar respecto de un vector](lm_apendice_derivadas.html) [(pdf)](lm_apendice_derivadas.pdf)
+    b. [Matriz de covarianzas](lm_apendice_covarianzas.html) [(pdf)](lm_apendice_covarianzas.pdf)
+    c. [Variable aleatoria normal](lm_apendice_normal.html) [(pdf)](lm_apendice_normal.pdf) 
+
 # Bibliografía
 
 Los libros utilizados en la redacción de estos apuntes han sido, fundamentalmente:
