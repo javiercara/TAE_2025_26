@@ -225,7 +225,7 @@ n = nrow(d)
 Falta calcular $b_0$. Utilizamos la fórmula
 
 $$
-b_0 = \bar y - (b_1 \bar x_{1} + b_2 \bar x_{2} + \cdots + b_k \bar x_{k})
+b_0 = \bar y - (\hat{\beta}_1 \bar x_{1} + \hat{\beta}_2 \bar x_{2} + \cdots + \hat{\beta}_k \bar x_{k})
 $$
 
 ```{r}
