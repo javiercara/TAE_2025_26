@@ -33,6 +33,12 @@ output:
     c. [Estimación del modelo para los datos del ejemplo](lm_modelo_estimacion.html) [(pdf)](lm_modelo_estimacion.pdf)
     d. [Estimación del modelo con la función lm](lm_modelo_lm.html) [(pdf)](lm_modelo_lm.pdf)
     e. [Regresores cualitativos](lm_modelo_cualitativas.html) [(pdf)](lm_modelo_cualitativas.pdf)
+
+2. Inferencia en el modelo de regresión lineal
+    a. [Estimadores y su distribución](lm_inferencia_muestreo.html) [(pdf)](lm_inferencia_muestreo.pdf)
+    b. [Intervalos de confianza](lm_inferencia_intervalos.html) [(pdf)](lm_inferencia_intervalos.pdf)
+    c. [Contraste de hipótesis](lm_inferencia_contrastes.html) [(pdf)](lm_inferencia_contrastes.pdf)
+    d. [Bootstrap](lm_inferencia_bootstrap.html) [(pdf)](lm_inferencia_bootstrap.pdf)
     
 10. Apéndices
     a. [Derivada de un escalar respecto de un vector](lm_apendice_derivadas.html) [(pdf)](lm_apendice_derivadas.pdf)

@@ -373,7 +373,7 @@ str(yp)</code></pre>
 <pre><code>##  Factor w/ 3 levels &quot;Adelie&quot;,&quot;Chinstrap&quot;,..: 1 3 2 1 3 1 1 1 2 3 ...
 ##  - attr(*, &quot;nn.index&quot;)= int [1:266, 1:3] 261 10 40 255 162 160 110 129 178 2 ...
 ##  - attr(*, &quot;nn.dist&quot;)= num [1:266, 1:3] 0.0813 0.04 0.0552 0.1912 0.0729 ...</code></pre>
-<p>El significado es el mismo que lo obtenido con knn.reg. La matriz de confusion nos da una medida del error de prediccion:</p>
+<p>El significado es el mismo que lo obtenido con <em>knn.reg</em>. La matriz de confusion nos da una medida del error de prediccion:</p>
 <pre class="r"><code>(t = table(train_y,yp))</code></pre>
 <pre><code>##            yp
 ## train_y     Adelie Chinstrap Gentoo

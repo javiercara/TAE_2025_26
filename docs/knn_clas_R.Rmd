@@ -1,13 +1,13 @@
 ---
 title: "KNN para el análisis de variables cualitativas con R"
 output: 
+  pdf_document:
+    number_sections: true
+    toc: true
   html_document:
     number_sections: true
     toc: true
     toc_float: true
-  pdf_document:
-    number_sections: true
-    toc: true
 ---
 
 # Introducción
@@ -165,7 +165,7 @@ Cuando se trata de un problema de clasicación se tiene que utilizar la función
 yp=FNN::knn.cv(train_x,train_y, k = 3)
 str(yp)
 ```
-El significado es el mismo que lo obtenido con knn.reg. La matriz de confusion nos da una medida del error de prediccion:
+El significado es el mismo que lo obtenido con *knn.reg*. La matriz de confusion nos da una medida del error de prediccion:
 
 ```{r}
 (t = table(train_y,yp))

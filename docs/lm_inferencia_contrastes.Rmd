@@ -1,0 +1,494 @@
+---
+title: "Contrastes de hipótesis"
+output: 
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+  pdf_document:
+    number_sections: true
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Contrastes para las $\beta_i$ usando la distribución *t-student*
+
+## Teoría
+
+Queremos resolver los contrastes:
+
+$$
+H_0: \beta_i = 0 \\
+H_1: \beta_i \neq 0
+$$
+
+para el modelo $y_i = \beta_0 + \beta_1 x_{1i} + \cdots + \beta_k x_{ki} + u_i$. Hemos visto que
+
+$$
+\frac{\hat \beta_i - \beta_i}{se(\hat \beta_i)} \rightarrow t_{n-k-1}
+$$
+El procedimiento se puede resumir en:
+
+* Partimos de un estadístico con distribución conocida.
+* Suponemos que $H_0$ es cierta y obtenemos la distribución del estadístico.
+* Comprobamos si los datos que tenemos (la muestra) son un valor probable para la distribución obtenida o no.
+
+Por tanto, si $H_0$ es cierta:
+
+$$
+t_0 = \frac{\hat \beta_i}{se(\hat \beta_i)} \rightarrow t_{n-k-1}
+$$
+
+Sea $t_{n-k-1;\alpha/2}$ el valor de una t-student con (n-k-1) grados de libertad tal que
+
+$$
+P(t_{n-k-1} \geq t_{n-k-1;\alpha/2}) = \alpha/2
+$$
+
+- si $|t_0| \geq t_{n-k-1;\alpha/2}$: se rechaza $H_0$
+- si $|t_0| \leq t_{n-k-1;\alpha/2}$: no se rechaza $H_0$
+
+Se define el *pvalor* como:
+
+$$
+pvalor = 2 P(t_{n-k-1} \geq |t_0|)
+$$
+
+Por tanto
+
+- si $pvalor \leq \alpha$: se rechaza $H_0$
+- si $pvalor \geq \alpha$: no se rechaza $H_0$
+
+## Ejemplo
+
+Veamos por ejemplo el modelo *kid_score ~ mom_hs + mom_iq + mom_age*:
+
+```{r}
+load("datos/kidiq.Rdata")
+str(d)
+```
+
+```{r}
+m1 = lm(kid_score ~ . - mom_work, data = d)
+summary(m1)
+```
+
+Veamos de donde salen los valores de la tabla anterior:
+
+- Estimate:
+
+```{r}
+(beta_e = coefficients(m1))
+```
+
+- Std. Error:
+
+```{r}
+(beta_se = sqrt(diag(vcov(m1))))
+```
+
+- t value:
+
+```{r}
+(t_value = beta_e/beta_se)
+```
+
+- Pr(>|t|) (es decir, p-valores):
+
+```{r}
+n = nrow(d)
+k = 3
+(pvalores = 2*pt(abs(t_value), df = n - k -1, lower.tail = F))
+```
+
+- Si juntamos todo en una tabla:
+
+```{r}
+data.frame(beta_e, beta_se, t_value, pvalores)
+```
+
+# Relación entre intervalos de confianza y contrastes
+
+Sean los contrastes bilaterales:
+
+$$
+H_0: \beta_i = 0 \\
+H_1: \beta_i \neq 0
+$$
+
+Y los intervalos de confianza de los mismos parámetros:
+
+$$
+\beta_i \in (a_i, b_i)
+$$
+
+Existe una relación entre ambos:
+
+- Si $0 \in (a_i, b_i) \Rightarrow$ no se rechaza $H_0$.
+- Si $0 \notin (a_i, b_i) \Rightarrow$ se rechaza $H_0$.
+
+En el caso del ejemplo, si miramos pvalores e intervalos:
+
+```{r}
+confint(m1)
+summary(m1)
+```
+
+
+# Contraste para $\sigma^2$
+
+El contraste es:
+
+$$
+H_0 : \sigma^2 = \sigma^2_0 \\
+H_1 : \sigma^2 \neq \sigma^2_0
+$$
+
+El estadístico del contraste que vamos a utilizar es:
+
+$$
+\frac{(n-k-1)\hat s_R^2}{\sigma^2} \rightarrow \chi^2_{n-k-1}
+$$
+
+Por tanto, si la hipótesis nula es cierta,
+
+$$
+\chi^2_0 = \frac{(n-k-1)\hat s_R^2}{\sigma^2_0} \rightarrow \chi^2_{n-k-1}
+$$
+
+Como ejemplo, vamos a contrastar
+
+$$
+H_0 : \sigma^2 = 20^2 \\
+H_1 : \sigma^2 \neq 20^2
+$$
+
+```{r}
+(chisq_0 = sum(resid(m1)^2)/20^2)
+# limites del contraste bilateral
+c(qchisq(0.05/2,df = n-k-1), qchisq(1-0.05/2,df = n-k-1))
+```
+
+Por tanto se rechaza la hipótesis nula. El mismo resultado se obtiene mirando el intervalo de confianza.
+
+# Contraste de regresión múltiple
+
+## La distribución *F*
+
+Sean una $\chi^2_m$ y una $\chi^2_n$, ambas independientes. La distribución F se define como
+
+$$
+\frac{\chi^2_m / m}{\chi^2_n / n} \sim F_{m,n}
+$$
+
+La distribución *F* es similar a la $\chi^2$:
+
+```{r}
+curve(df(x,10,5), from = 0, to = 10, col = "blue")
+```
+
+## Descomposición de la suma de cuadrados
+
+Tenemos el modelo
+
+$$
+y_i = \hat \beta_0 + \hat \beta_1 x_{1i} + \cdots + \hat \beta_k x_{ki} + e_i = \hat y_i + e_i
+$$
+
+Restando la media $\bar y = \sum y_i / n$:
+
+$$
+y_i - \bar y = \hat y_i - \bar y + e_i 
+$$
+
+Elevando al cuadrado y sumando se tiene:
+
+$$
+\sum (y_i - \bar y)^2 = \sum (\hat y_i - \bar y)^2 + \sum e_i^2 
+$$
+ya que $\sum (\hat y_i - \bar y) e_i = 0$. Se denominan:
+
+- Suma de cuadrados total: 
+
+$$SCT = \sum (y_i - \bar y)^2$$
+
+- Suma de cuadrados del modelo: 
+
+$$SCM = \sum (\hat y_i - \bar y)^2$$
+
+- Suma de cuadrados de los residuos: 
+
+$$SCR = \sum e_i^2$$
+
+Por tanto, se cumple que 
+
+$$SCT = SCM + SCR$$
+
+
+## Expresiones alternativas para la suma de cuadrados
+
+- Suma de cuadrados total: 
+
+$$SCT = (n-1)\hat s_y^2$$
+
+ya que la varianza $\hat{s}_y^2 = \frac{1}{n-1} \sum (y_i - \bar y)^2$.
+
+- Suma de cuadrados estimados por el modelo: 
+
+$$SCM = (n-1) \hat \beta_a^T S_{xx} \hat \beta_a = (n-1) \hat \beta_a^T S_{xy}$$
+
+Para probar esa relación se tiene que:
+
+$$
+\hat{y}_i - \bar{y} = \hat \beta_1 (x_{1i} - \bar{x}_1) + \cdots + \hat \beta_k (x_{ki} - \bar{x}_k)
+$$
+
+Por tanto:
+
+$$
+\begin{bmatrix}
+\hat y_1 - \bar y \\ \hat y_2 - \bar y \\ \cdots \\ \hat y_n - \bar y
+\end{bmatrix}
+=
+\begin{bmatrix}
+x_{11} - \bar x_{1} & x_{21} - \bar x_{2} & \cdots  & x_{k1} - \bar x_{k} \\
+x_{12} - \bar x_{1} & x_{22} - \bar x_{2} & \cdots  & x_{k2} - \bar x_{k} \\
+\cdots &\cdots & \cdots & \cdots \\
+x_{1n} - \bar x_{1} & x_{2n} - \bar x_{2} & \cdots  & x_{kn} - \bar x_{k} \\
+\end{bmatrix}
+\begin{bmatrix}
+\hat \beta_1 \\ \hat \beta_2 \\ \cdots  \\ \hat \beta_k
+\end{bmatrix}
+$$
+
+Es decir
+
+$$
+\hat{y} - \bar{y} = X_a \hat \beta_a
+$$
+
+$$
+SCM = \sum (\hat y_i - \bar y)^2 = (\hat{y} - \bar{y})^T (\hat{y} - \bar{y}) = \hat \beta_a^T X_a^T X_a \hat \beta_a
+$$
+
+$$
+= (n-1) \hat \beta_a^T S_{xx} \hat \beta_a = (n-1) \hat \beta_a^T S_{xx} S_{xx}^{-1} S_{xy} = (n-1) \hat \beta_a^T S_{xy}
+$$
+
+- Suma de cuadrados de los residuos: 
+
+$$SCR = (n-k-1)\hat s_R^2$$
+
+ya que la varianza resiudal es $\hat{s}_R^2 = \frac{\sum e_i^2}{n-k-1}$.
+
+## Contraste
+
+Este contraste establece, de manera conjunta, si alguno de los regresores influye en la respuesta. Es decir, en el modelo $y_i = \beta_0 + \beta_1 x_{1i} + \cdots + \beta_k x_{ki} + u_i$ se constrasta si
+
+$$
+H_0 : \beta_1 = \beta_2 = \cdots = \beta_k = 0 \\
+H_1 : \text{Algún } \beta_i \neq 0
+$$
+
+Para resolver este contraste, se puede demostrar que:
+
+- Si $\beta_1 = \beta_2 = \cdots = \beta_k = 0 \Rightarrow SCM/\sigma^2 \sim \chi^2_k$
+- $SCR/\sigma^2 \sim \chi^2_{n-k-1}$
+- SCM y SCR son independientes.
+
+Por lo tanto es razonable utilizar el estadístico:
+
+$$
+\frac{\frac{SCM/\sigma^2}{k}}{\frac{SCR/\sigma^2}{n-k-1}} \sim F_{k, n-k-1} \Rightarrow F_0 = \frac{SCM/k}{SCR/(n-k-1)} \sim F_{k, n-k-1}
+$$
+
+Si $\beta_1 = \beta_2 = \cdots = \beta_k = 0$, SCM $\approx$ 0 y el estadístico tomará valores pequeños; cuando algún $\beta$ sea distinto de cero, SCM > SCR y el estadístico irá tomando cada vez valores más altos. Por tanto se rechazará la hipótesis nula para valores grandes del estadístico:
+
+- si $F_0 > F_\alpha$: se rechaza $H_0$
+- si $F_0 \leq F_\alpha$: no se rechaza $H_0$
+
+## Ejemplo
+
+Queremos contrastar si $\beta_{mom\_age} = \beta_{mom\_hs} = \beta_{mom\_iq}= 0$ en el modelo *kid_score ~ mom_hs + mom_iq + mom_age*, es decir, si estos regresores influyen en la puntuación obtenida en el test.
+
+```{r}
+(SCT = sum((d$kid_score - mean(d$kid_score))^2) )
+(SCR = sum(resid(m1)^2))
+(SCM = SCT - SCR)
+(F_0 = SCM/k/(SCR/(n-k-1)))
+(F_alfa = qf(0.05, df1 = k, df2 =n-5-1))
+# pvalor
+1 - pf(F_0, k, n-k-1)
+```
+
+- En R:
+
+```{r}
+summary(m1)
+```
+
+Luego se rechaza la hipótesis nula, y al menos uno de los regresores influye en *kid_score*.
+
+# Contraste para un grupo de coeficientes
+
+Consideremos el modelo de regresión con *k* regresores:
+
+$$
+y = X \beta + u, \ dim(\beta) = k \times 1 
+$$
+
+Y consideremos otro modelo de regresión en el que se utilizan *m* de los *k* regresores ($m < k$):
+
+$$
+y = X' \beta' + u', \ dim(\beta') = m \times 1 
+$$
+
+Sea *SCR(k)* la suma de cuadrados residual del primer modelo, y *SCR(m)* la suma de cuadrados residual del segundo modelo. Se puede demostrar que:
+
+$$
+F_0 = \frac{(SCR(m)-SCR(k))/(k-m)}{SCR(k)/(n-k-1)} \sim F_{k-m, n-k-1}
+$$
+
+Con este estadístico podemos resolver el contraste 
+
+$$
+H_0 : \text{Los modelos son iguales} \\
+H_1 : \text{Los modelos NO son iguales}
+$$
+
+Si el estadístico toma valores pequeños quiere decir que la suma de cuadrados residual es parecida en ambos modelos, luego se considera que los modelos son equivalentes. Por tanto, se rechazará la hipótesis nula para valores grandes del estadístico:
+
+- si $F_0 > F_\alpha$: se rechaza $H_0$
+- si $F_0 \leq F_\alpha$: no se rechaza $H_0$
+
+
+## Ejemplo: contraste para un regresor
+
+Vamos a analizar si el regresor *mom_age* puede eliminarse de la lista. El contraste que resolvemos es $H_0 : \beta_{mom\_age} = 0$ en el modelo *kid_score ~ mom_hs + mom_iq + mom_age*. Para ello lo comparamos con el modelo *kid_score ~ mom_hs + mom_iq*. Si los modelos son equivalentes quiere decir que $\beta_{mom\_age} = 0$:
+
+```{r}
+m2 = lm(kid_score ~ mom_hs + mom_iq, data = d)
+(SCR2 = sum(resid(m2)^2))
+m = 2
+(F_0 = ((SCR2 - SCR)/(k-m))/(SCR/(n-k-1)))
+# F_alfa
+qf(0.95, k-m, n-k-1)
+# pvalor
+1-pf(F_0, k-m, n-k-1)
+```
+
+Luego no se puede rechazar la hipótesis nula (los modelos son iguales), luego el regresor *mom_age* se puede eliminar del modelo Se obtiene el mismo resultado que con el contraste de la t-student.
+
+- Con R:
+
+```{r}
+anova(m2, m1)
+```
+
+## Ejemplo: el contraste de regresión múltiple
+
+El contraste de regresión múltiple ($H_0 : \beta_{mom\_hs} = \beta_{mom\_iq} = \beta_{mom\_age} = 0$) también se puede resolver utilizando este estadístico. Los dos modelos a comparar son: *kid_score ~ 1 + mom_hs + mom_iq + mom_age* y *kid_score ~ 1*. El 1 hace referencia al $\beta_0$, y se estima por defecto si no se indica explicitamente:
+
+```{r}
+m3 = lm(kid_score ~ 1, d)
+```
+
+Por tanto
+
+```{r}
+anova(m3, m1)
+```
+
+## Ejemplo: contraste sobre una pareja de regresores
+
+El contraste que resolvemos es $H_0 : \beta_{mom\_iq} = \beta_{mom\_age} = 0$ en el modelo *kid_score ~ mom_hs + mom_iq + mom_age*. Para ello lo comparamos con el modelo:
+
+```{r}
+m4 = lm(kid_score ~ mom_hs, data = d)
+(SCR4 = sum(resid(m4)^2))
+m = 1
+(F_0 = ((SCR4 - SCR)/(k-m))/(SCR/(n-k-1)))
+# F_alfa
+qf(0.05, k-m, n-k-1)
+# pvalor
+1-pf(F_0, k-m, n-k-1)
+```
+
+Luego se rechaza la hipótesis nula.
+
+- Con R:
+
+```{r}
+anova(m4, m1)
+```
+
+## Ejemplo: contraste de igualdad de regresores  
+
+El contraste que resolvemos es $H_0 : \beta_{mom\_iq} = \beta_{mom\_age}$ en el modelo *kid_score ~ mom_hs + mom_iq + mom_age*. Hacemos la comparación con el modelo:
+
+```{r}
+m5 = lm(kid_score ~ mom_hs + I(mom_iq + mom_age), data = d)
+(SCR5 = sum(resid(m5)^2))
+m = 2
+(F_0 = ((SCR5 - SCR)/(k-m))/(SCR/(n-k-1)))
+# pvalor
+1-pf(F_0, k-m, n-k-1)
+```
+OJO, el modelo m5 es:
+
+$$
+kid\_score_i = \beta_0 + \beta_1 mom\_hs_i + \beta_2 mom\_iq_i +  \beta_2 mom\_age_i + u_i
+$$
+- En R:
+
+```{r}
+anova(m5,m1)
+```
+
+Como vemos no se puede rechazar la hipótesis nula *Los modelos son iguales*, luego no se puede rechazar $H_0 : \beta_{mom\_iq} = \beta_{mom\_age}$.
+
+Por último vamos a resolver este contraste con la t-student. El modelo m1 es 
+
+$$kid\_score = \beta_0 + \beta_1 mom\_hssi + \beta_2 mom\_iq + \beta_3 mom\_age + u$$
+
+La hipótesis nula del contraste es: $H_0 : \beta_2 = \beta_3$. Para encontrar el estadístico del contraste tenemos que:
+
+$$
+\hat \beta_2 \sim N(\beta_2, \sigma^2 Q_{3,3}), \quad \hat \beta_3 \sim N(\beta_3, \sigma^2 Q_{4,4})
+$$
+
+Por tanto:
+
+$$
+\hat \beta_2 - \hat \beta_3 \sim N(\beta_2 - \beta_3, \sigma^2 (Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))
+$$
+
+Es decir:
+
+$$
+\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\sigma^2 (Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))}} \sim N(0,1)
+$$
+
+Reemplazando $\sigma^2$ por $\hat s_R^2$ se tiene:
+
+$$
+\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\hat s_R^2 ( Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))}} \sim t_{n-k-1}
+$$
+
+Finalmente el estadístico del contraste cuando $H_0$ es cierta es:
+
+$$
+t_0 = \frac{\hat \beta_2 - \hat \beta_3}{\sqrt{\hat s_R^2 (Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))}} \sim t_{n-k-1}
+$$
+
+```{r}
+beta_var = vcov(m1)
+(t0 = (coef(m1)[3] - coef(m1)[4])/sqrt(beta_var[3,3] + beta_var[4,4] - 2*beta_var[3,4]))
+# pvalor
+2*pt(abs(t0), n - k - 1, lower.tail = F)
+```
+
+
