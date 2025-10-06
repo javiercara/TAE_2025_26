@@ -1,0 +1,29 @@
+---
+title: "Distribución t-student con n grados de libertad"
+output: 
+  pdf_document:
+    number_sections: true
+    toc: true
+  html_document:
+    number_sections: true
+    toc: true
+---
+
+La distribución t de student con n grados de libertad se define como
+
+$$
+t_n = \frac{N(0,1)}{\sqrt{\frac{\chi_n^2}{n}}}
+$$
+
+La distribución *t-student* es similar a la *N(0,1)*. De hecho, $\lim _{n \to \infty} t_n = N(0,1)$.
+
+```{r}
+curve(dnorm(x,0,1), from = -5, to = 5, col = "blue")
+curve(dt(x,5), add = T, col = "green")
+curve(dt(x,20), add = T, col = "red")
+```
+
+Propiedades:
+
+* $E[\chi_n^2] = n$
+* $Var[\chi_n^2] = 2n$

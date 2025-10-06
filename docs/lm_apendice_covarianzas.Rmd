@@ -25,13 +25,13 @@ $$
 se define la covarianza entre las variables $x_j$ e $y$ como:
 
 $$
-cov(x_{j},y) = S_{jy} = \frac{\sum_{i=1}^{n}(x_{ji} - \bar x_j)(y_i - \bar y)}{n-1}, \quad j \in [1,m], \quad i \in [1,n]
+cov(x_{j},y) = s_{jy} = \frac{\sum_{i=1}^{n}(x_{ji} - \bar x_j)(y_i - \bar y)}{n-1}, \quad j \in [1,m], \quad i \in [1,n]
 $$
 
 y la covarianza entre las variables $x_j$ e $x_k$ como:
 
 $$
-cov(x_{j},x_{k}) = S_{jk} = \frac{\sum_{i=1}^{n}(x_{ji} - \bar x_j)(x_{ki} - \bar x_{k})}{n-1}, \quad j,k \in [1,m], \quad i \in [1,n]
+cov(x_{j},x_{k}) = s_{jk} = \frac{\sum_{i=1}^{n}(x_{ji} - \bar x_j)(x_{ki} - \bar x_{k})}{n-1}, \quad j,k \in [1,m], \quad i \in [1,n]
 $$
 
 Se define la matriz de covarianzas para $x_j$ y $x_k$ como:
@@ -39,10 +39,10 @@ Se define la matriz de covarianzas para $x_j$ y $x_k$ como:
 $$
 S_{xx} =
 \begin{bmatrix}
-S_{11} & S_{12} & \cdots & S_{1m} \\
-S_{21} & S_{22} & \cdots & S_{2m} \\
+s_{11} & s_{12} & \cdots & s_{1m} \\
+s_{21} & s_{22} & \cdots & s_{2m} \\
 \cdots & \cdots & \cdots & \cdots \\
-S_{m1} & S_{m2} & \cdots & S_{mm} \\
+s_{m1} & s_{m2} & \cdots & s_{mm} \\
 \end{bmatrix}
 $$
 
@@ -51,9 +51,42 @@ Se define la matriz de covarianzas entre $x_j$ e $y$ como:
 $$
 S_{xy} =
 \begin{bmatrix}
-S_{1y} \\
-S_{2y} \\
+s_{1y} \\
+s_{2y} \\
 \cdots \\
-S_{my} \\
+s_{my} \\
+\end{bmatrix}
+$$
+
+Las matrices $S_{xx}$ y $S_{xy}$ se pueden calcular a partir de la matriz 
+
+$$
+X =
+\begin{bmatrix}
+y_1-\bar{y} & x_{11}-\bar{x}_1 & x_{21}-\bar{x}_2 & \cdots  & x_{m1}-\bar{x}_m \\
+y_2-\bar{y} & x_{12}-\bar{x}_1 & x_{22}-\bar{x}_2 & \cdots  & x_{m2}-\bar{x}_m \\
+\cdots &\cdots & \cdots & \cdots  & \cdots \\
+y_n-\bar{y} & x_{1n}-\bar{x}_1 & x_{2n}-\bar{x}_2 & \cdots  & x_{mn}-\bar{x}_m \\
+\end{bmatrix}
+$$
+
+Efectivamente:
+
+$$
+\frac{1}{n-1}X^T X
+=
+\begin{bmatrix}
+s_{y}^2 & | & s_{1y} & s_{1y} & \cdots & s_{1y} \\
+- & - & - & - & - & - \\
+s_{1y} & | & s_{11} & s_{12} & \cdots & s_{1m} \\
+s_{2y} & | & s_{12} & s_{22} & \cdots & s_{2m} \\
+\cdots & | & \cdots & \cdots & \cdots & \cdots \\
+s_{my} & | & s_{m1} & s_{m2} & \cdots & s_{mm} \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+s_{y}^2 & | & S_{xy}^T \\
+- & - & - \\
+S_{yx} & | & S_{xx}
 \end{bmatrix}
 $$

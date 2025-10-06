@@ -1,13 +1,13 @@
 ---
 title: "Contrastes de hipótesis"
 output: 
+  pdf_document:
+    number_sections: true
+    toc: true
   html_document:
     number_sections: true
     toc: true
     toc_float: true
-  pdf_document:
-    number_sections: true
-    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -18,31 +18,36 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Teoría
 
-Queremos resolver los contrastes:
+Se quiere resolver los contrastes:
 
 $$
 H_0: \beta_i = 0 \\
 H_1: \beta_i \neq 0
 $$
 
-para el modelo $y_i = \beta_0 + \beta_1 x_{1i} + \cdots + \beta_k x_{ki} + u_i$. Hemos visto que
+para el modelo $y_i = \beta_0 + \beta_1 x_{1i} + \cdots + \beta_k x_{ki} + u_i$. 
 
-$$
-\frac{\hat \beta_i - \beta_i}{se(\hat \beta_i)} \rightarrow t_{n-k-1}
-$$
 El procedimiento se puede resumir en:
 
-* Partimos de un estadístico con distribución conocida.
-* Suponemos que $H_0$ es cierta y obtenemos la distribución del estadístico.
-* Comprobamos si los datos que tenemos (la muestra) son un valor probable para la distribución obtenida o no.
-
-Por tanto, si $H_0$ es cierta:
+1. Se parte de un estadístico con distribución conocida. En este caso se sabe que
 
 $$
-t_0 = \frac{\hat \beta_i}{se(\hat \beta_i)} \rightarrow t_{n-k-1}
+\frac{\hat \beta_i - \beta_i}{se(\hat \beta_i)} \sim t_{n-k-1}
 $$
 
-Sea $t_{n-k-1;\alpha/2}$ el valor de una t-student con (n-k-1) grados de libertad tal que
+2. Se admite que $H_0$ es cierta y se obtiene la distribución del estadístico bajo este supuesto. En ente caso, se supone que $\beta_i = 0$, por lo que
+
+$$
+\frac{\hat \beta_i}{se(\hat \beta_i)} \sim t_{n-k-1}
+$$
+
+2. Se comprueba si los datos disponibles (la muestra) son un valor probable para la distribución obtenida o no. En caso de que los datos sean poco probables si se admite la hipótesis de partida, entonces se rechaza ésta. Es decir, se calcula
+
+$$
+t_0 = \frac{\hat \beta_i}{se(\hat \beta_i)}
+$$
+
+que según la hipótesis de partida debería ser un valor muy probable para una distribución $t_{n-k-1}$. Sea $t_{n-k-1;\alpha/2}$ el valor de una t-student con (n-k-1) grados de libertad tal que
 
 $$
 P(t_{n-k-1} \geq t_{n-k-1;\alpha/2}) = \alpha/2
@@ -147,7 +152,7 @@ H_0 : \sigma^2 = \sigma^2_0 \\
 H_1 : \sigma^2 \neq \sigma^2_0
 $$
 
-El estadístico del contraste que vamos a utilizar es:
+El estadístico del contraste que se va a utilizar es:
 
 $$
 \frac{(n-k-1)\hat s_R^2}{\sigma^2} \rightarrow \chi^2_{n-k-1}
@@ -159,7 +164,7 @@ $$
 \chi^2_0 = \frac{(n-k-1)\hat s_R^2}{\sigma^2_0} \rightarrow \chi^2_{n-k-1}
 $$
 
-Como ejemplo, vamos a contrastar
+Como ejemplo, se quiere contrastar
 
 $$
 H_0 : \sigma^2 = 20^2 \\
@@ -359,7 +364,7 @@ H_0 : \text{Los modelos son iguales} \\
 H_1 : \text{Los modelos NO son iguales}
 $$
 
-Si el estadístico toma valores pequeños quiere decir que la suma de cuadrados residual es parecida en ambos modelos, luego se considera que los modelos son equivalentes. Por tanto, se rechazará la hipótesis nula para valores grandes del estadístico:
+Si el estadístico toma valores pequeños quiere decir que la suma de cuadrados residual es parecida en ambos modelos, que es lo que debería pasar si $H_0$ es cierta, por lo se considera que los modelos son equivalentes. Por tanto, se rechazará la hipótesis nula para valores grandes del estadístico:
 
 - si $F_0 > F_\alpha$: se rechaza $H_0$
 - si $F_0 \leq F_\alpha$: no se rechaza $H_0$
@@ -457,31 +462,31 @@ $$kid\_score = \beta_0 + \beta_1 mom\_hssi + \beta_2 mom\_iq + \beta_3 mom\_age 
 La hipótesis nula del contraste es: $H_0 : \beta_2 = \beta_3$. Para encontrar el estadístico del contraste tenemos que:
 
 $$
-\hat \beta_2 \sim N(\beta_2, \sigma^2 Q_{3,3}), \quad \hat \beta_3 \sim N(\beta_3, \sigma^2 Q_{4,4})
+\hat \beta_2 \sim N(\beta_2, \sigma^2 Q_{2,2}), \quad \hat \beta_3 \sim N(\beta_3, \sigma^2 Q_{3,3})
 $$
 
 Por tanto:
 
 $$
-\hat \beta_2 - \hat \beta_3 \sim N(\beta_2 - \beta_3, \sigma^2 (Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))
+\hat \beta_2 - \hat \beta_3 \sim N(\beta_2 - \beta_3, \sigma^2 (Q_{2,2} + Q_{3,3} - 2 Q_{2,3})
 $$
 
 Es decir:
 
 $$
-\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\sigma^2 (Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))}} \sim N(0,1)
+\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\sigma^2 (Q_{2,2} + Q_{3,3} - 2 Q_{2,3})}} \sim N(0,1)
 $$
 
 Reemplazando $\sigma^2$ por $\hat s_R^2$ se tiene:
 
 $$
-\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\hat s_R^2 ( Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))}} \sim t_{n-k-1}
+\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\hat s_R^2 ( Q_{2,2} + Q_{3,3} - 2 Q_{2,3} )}} \sim t_{n-k-1}
 $$
 
 Finalmente el estadístico del contraste cuando $H_0$ es cierta es:
 
 $$
-t_0 = \frac{\hat \beta_2 - \hat \beta_3}{\sqrt{\hat s_R^2 (Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))}} \sim t_{n-k-1}
+t_0 = \frac{\hat \beta_2 - \hat \beta_3}{\sqrt{\hat s_R^2 (Q_{2,2} + Q_{3,3} - 2 Q_{2,3})}} \sim t_{n-k-1}
 $$
 
 ```{r}

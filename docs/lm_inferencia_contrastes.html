@@ -245,25 +245,32 @@ div.tocify {
 <h1><span class="header-section-number">1</span> Contrastes para las <span class="math inline">\(\beta_i\)</span> usando la distribución <em>t-student</em></h1>
 <div id="teoría" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Teoría</h2>
-<p>Queremos resolver los contrastes:</p>
+<p>Se quiere resolver los contrastes:</p>
 <p><span class="math display">\[
 H_0: \beta_i = 0 \\
 H_1: \beta_i \neq 0
 \]</span></p>
-<p>para el modelo <span class="math inline">\(y_i = \beta_0 + \beta_1 x_{1i} + \cdots + \beta_k x_{ki} + u_i\)</span>. Hemos visto que</p>
+<p>para el modelo <span class="math inline">\(y_i = \beta_0 + \beta_1 x_{1i} + \cdots + \beta_k x_{ki} + u_i\)</span>.</p>
+<p>El procedimiento se puede resumir en:</p>
+<ol style="list-style-type: decimal">
+<li>Se parte de un estadístico con distribución conocida. En este caso se sabe que</li>
+</ol>
 <p><span class="math display">\[
-\frac{\hat \beta_i - \beta_i}{se(\hat \beta_i)} \rightarrow t_{n-k-1}
-\]</span> El procedimiento se puede resumir en:</p>
-<ul>
-<li>Partimos de un estadístico con distribución conocida.</li>
-<li>Suponemos que <span class="math inline">\(H_0\)</span> es cierta y obtenemos la distribución del estadístico.</li>
-<li>Comprobamos si los datos que tenemos (la muestra) son un valor probable para la distribución obtenida o no.</li>
-</ul>
-<p>Por tanto, si <span class="math inline">\(H_0\)</span> es cierta:</p>
-<p><span class="math display">\[
-t_0 = \frac{\hat \beta_i}{se(\hat \beta_i)} \rightarrow t_{n-k-1}
+\frac{\hat \beta_i - \beta_i}{se(\hat \beta_i)} \sim t_{n-k-1}
 \]</span></p>
-<p>Sea <span class="math inline">\(t_{n-k-1;\alpha/2}\)</span> el valor de una t-student con (n-k-1) grados de libertad tal que</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Se admite que <span class="math inline">\(H_0\)</span> es cierta y se obtiene la distribución del estadístico bajo este supuesto. En ente caso, se supone que <span class="math inline">\(\beta_i = 0\)</span>, por lo que</li>
+</ol>
+<p><span class="math display">\[
+\frac{\hat \beta_i}{se(\hat \beta_i)} \sim t_{n-k-1}
+\]</span></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Se comprueba si los datos disponibles (la muestra) son un valor probable para la distribución obtenida o no. En caso de que los datos sean poco probables si se admite la hipótesis de partida, entonces se rechaza ésta. Es decir, se calcula</li>
+</ol>
+<p><span class="math display">\[
+t_0 = \frac{\hat \beta_i}{se(\hat \beta_i)}
+\]</span></p>
+<p>que según la hipótesis de partida debería ser un valor muy probable para una distribución <span class="math inline">\(t_{n-k-1}\)</span>. Sea <span class="math inline">\(t_{n-k-1;\alpha/2}\)</span> el valor de una t-student con (n-k-1) grados de libertad tal que</p>
 <p><span class="math display">\[
 P(t_{n-k-1} \geq t_{n-k-1;\alpha/2}) = \alpha/2
 \]</span></p>
@@ -404,7 +411,7 @@ H_1: \beta_i \neq 0
 H_0 : \sigma^2 = \sigma^2_0 \\
 H_1 : \sigma^2 \neq \sigma^2_0
 \]</span></p>
-<p>El estadístico del contraste que vamos a utilizar es:</p>
+<p>El estadístico del contraste que se va a utilizar es:</p>
 <p><span class="math display">\[
 \frac{(n-k-1)\hat s_R^2}{\sigma^2} \rightarrow \chi^2_{n-k-1}
 \]</span></p>
@@ -412,7 +419,7 @@ H_1 : \sigma^2 \neq \sigma^2_0
 <p><span class="math display">\[
 \chi^2_0 = \frac{(n-k-1)\hat s_R^2}{\sigma^2_0} \rightarrow \chi^2_{n-k-1}
 \]</span></p>
-<p>Como ejemplo, vamos a contrastar</p>
+<p>Como ejemplo, se quiere contrastar</p>
 <p><span class="math display">\[
 H_0 : \sigma^2 = 20^2 \\
 H_1 : \sigma^2 \neq 20^2
@@ -597,7 +604,7 @@ F_0 = \frac{(SCR(m)-SCR(k))/(k-m)}{SCR(k)/(n-k-1)} \sim F_{k-m, n-k-1}
 H_0 : \text{Los modelos son iguales} \\
 H_1 : \text{Los modelos NO son iguales}
 \]</span></p>
-<p>Si el estadístico toma valores pequeños quiere decir que la suma de cuadrados residual es parecida en ambos modelos, luego se considera que los modelos son equivalentes. Por tanto, se rechazará la hipótesis nula para valores grandes del estadístico:</p>
+<p>Si el estadístico toma valores pequeños quiere decir que la suma de cuadrados residual es parecida en ambos modelos, que es lo que debería pasar si <span class="math inline">\(H_0\)</span> es cierta, por lo se considera que los modelos son equivalentes. Por tanto, se rechazará la hipótesis nula para valores grandes del estadístico:</p>
 <ul>
 <li>si <span class="math inline">\(F_0 &gt; F_\alpha\)</span>: se rechaza <span class="math inline">\(H_0\)</span></li>
 <li>si <span class="math inline">\(F_0 \leq F_\alpha\)</span>: no se rechaza <span class="math inline">\(H_0\)</span></li>
@@ -705,23 +712,23 @@ kid\_score_i = \beta_0 + \beta_1 mom\_hs_i + \beta_2 mom\_iq_i +  \beta_2 mom\_a
 <p><span class="math display">\[kid\_score = \beta_0 + \beta_1 mom\_hssi + \beta_2 mom\_iq + \beta_3 mom\_age + u\]</span></p>
 <p>La hipótesis nula del contraste es: <span class="math inline">\(H_0 : \beta_2 = \beta_3\)</span>. Para encontrar el estadístico del contraste tenemos que:</p>
 <p><span class="math display">\[
-\hat \beta_2 \sim N(\beta_2, \sigma^2 Q_{3,3}), \quad \hat \beta_3 \sim N(\beta_3, \sigma^2 Q_{4,4})
+\hat \beta_2 \sim N(\beta_2, \sigma^2 Q_{2,2}), \quad \hat \beta_3 \sim N(\beta_3, \sigma^2 Q_{3,3})
 \]</span></p>
 <p>Por tanto:</p>
 <p><span class="math display">\[
-\hat \beta_2 - \hat \beta_3 \sim N(\beta_2 - \beta_3, \sigma^2 (Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))
+\hat \beta_2 - \hat \beta_3 \sim N(\beta_2 - \beta_3, \sigma^2 (Q_{2,2} + Q_{3,3} - 2 Q_{2,3})
 \]</span></p>
 <p>Es decir:</p>
 <p><span class="math display">\[
-\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\sigma^2 (Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))}} \sim N(0,1)
+\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\sigma^2 (Q_{2,2} + Q_{3,3} - 2 Q_{2,3})}} \sim N(0,1)
 \]</span></p>
 <p>Reemplazando <span class="math inline">\(\sigma^2\)</span> por <span class="math inline">\(\hat s_R^2\)</span> se tiene:</p>
 <p><span class="math display">\[
-\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\hat s_R^2 ( Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))}} \sim t_{n-k-1}
+\frac{(\hat \beta_2 - \hat \beta_3) - (\beta_2 - \beta_3)}{\sqrt{\hat s_R^2 ( Q_{2,2} + Q_{3,3} - 2 Q_{2,3} )}} \sim t_{n-k-1}
 \]</span></p>
 <p>Finalmente el estadístico del contraste cuando <span class="math inline">\(H_0\)</span> es cierta es:</p>
 <p><span class="math display">\[
-t_0 = \frac{\hat \beta_2 - \hat \beta_3}{\sqrt{\hat s_R^2 (Q_{3,3} + Q_{4,4} - 2 Q_{3,4}))}} \sim t_{n-k-1}
+t_0 = \frac{\hat \beta_2 - \hat \beta_3}{\sqrt{\hat s_R^2 (Q_{2,2} + Q_{3,3} - 2 Q_{2,3})}} \sim t_{n-k-1}
 \]</span></p>
 <pre class="r"><code>beta_var = vcov(m1)
 (t0 = (coef(m1)[3] - coef(m1)[4])/sqrt(beta_var[3,3] + beta_var[4,4] - 2*beta_var[3,4]))</code></pre>

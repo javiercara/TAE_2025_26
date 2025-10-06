@@ -3,12 +3,12 @@ title: "Técnicas Avanzadas de Estadística"
 author: "[Javier Cara](https://www.javiercara.com/)"
 date: "curso 2025-26"
 output: 
+  pdf_document:
+    toc: false
   html_document:
     number_sections: true
     toc: false
     toc_depth: 2
-  pdf_document:
-    toc: false
 ---
 
 <br>
@@ -43,7 +43,8 @@ output:
 10. Apéndices
     a. [Derivada de un escalar respecto de un vector](lm_apendice_derivadas.html) [(pdf)](lm_apendice_derivadas.pdf)
     b. [Matriz de covarianzas](lm_apendice_covarianzas.html) [(pdf)](lm_apendice_covarianzas.pdf)
-    c. [Variable aleatoria normal](lm_apendice_normal.html) [(pdf)](lm_apendice_normal.pdf) 
+    c. [Variable aleatoria normal](lm_apendice_normal.html) [(pdf)](lm_apendice_normal.pdf)
+    d. [Distribución t-student](lm_apendice_tn.html) [(pdf)](lm_apendice_tn.pdf)
 
 # Bibliografía
 

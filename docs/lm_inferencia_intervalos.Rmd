@@ -1,24 +1,28 @@
 ---
 title: "Inferencia en el modelo de regresión lineal: intervalos de confianza"
 output: 
+  pdf_document:
+    number_sections: true
+    toc: true
   html_document:
     number_sections: true
     toc: true
     toc_float: true
-  pdf_document:
-    number_sections: true
-    toc: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Introduccion
-
-Un intervalo de confianza para un parámetro es **un rango de valores posibles para dicho parámetro**.
-
 # Intervalo de confianza para las $\beta_i$
+
+Se quiere obtener un intervalo $(LI,LS)$ tal que
+
+$$
+P(LI \leq \beta_i \leq LS) = 1-\alpha
+$$
+
+A dicho intervalo se le llama *intervalo de confianza con nivel de confianza* $1-\alpha$. Un intervalo de confianza para un parámetro se puede entender como **un rango de valores posibles para dicho parámetro**.
 
 ## Con matrices de datos
 
@@ -28,47 +32,119 @@ $$
 \hat \beta \rightarrow N(\beta, \sigma^2 Q)
 $$
 
-donde $Q = (X^TX)^{-1}$. Esto implica que:
+donde $Q = (X^TX)^{-1}$:
 
 $$
-\hat \beta_i \rightarrow N(\beta_i, \sigma^2 Q_{i+1,i+1}), \quad i = 0,1,2, \ldots,k
+Q
+=
+\begin{bmatrix}
+q_{00} & q_{01} & \cdots & q_{0k} \\
+q_{10} & q_{11} & \cdots & q_{1k} \\
+\cdots & \cdots & \cdots & \cdots \\
+q_{k0} & q_{k1} & \cdots & q_{kk} \\
+\end{bmatrix}
 $$
 
-donde $Q_{i,i}$ es el elemento *(i,i)* de la matriz Q. Aplicando las propiedades de la distribución normal
+Es decir:
 
 $$
-\frac{\hat \beta_i - \beta_i}{ \sqrt{ \sigma^2 Q_{i+1,i+1} }} \rightarrow N(0,1), \quad i = 0,1,2,\cdots,k.
+\begin{bmatrix}
+\hat{\beta}_0 \\ \hat{\beta}_1 \\ \cdots \\ \hat{\beta}_k \\
+\end{bmatrix}
+\sim
+N \left(
+\begin{bmatrix}
+\beta_0 \\ \beta_1 \\ \cdots \\ \beta_k \\
+\end{bmatrix}
+,
+\sigma^2
+\begin{bmatrix}
+q_{00} & q_{01} & \cdots & q_{0k} \\
+q_{10} & q_{11} & \cdots & q_{1k} \\
+\cdots & \cdots & \cdots & \cdots \\
+q_{k0} & q_{k1} & \cdots & q_{kk} \\
+\end{bmatrix}
+\right)
 $$
 
-Por tanto:
+Esto implica que:
+
+$$
+\hat \beta_i \rightarrow N(\beta_i, \sigma^2 q_{ii}), \quad i = 0,1,2, \ldots,k
+$$
+
+Aplicando las propiedades de la distribución normal
+
+$$
+\frac{\hat \beta_i - \beta_i}{ \sqrt{ \sigma^2 q_{ii} }} \rightarrow N(0,1), \quad i = 0,1,2,\cdots,k.
+$$
+Si se tiene en cuenta que:
+
+$$
+\frac{(n-k-1)\hat{s}_R^2}{\sigma^2} \sim \chi^2_{n-k-1}
+$$
+
+y de acuerdo con el [Apendice: Distribución t-student](lm_apendice_tn.html), se puede obtener que
+
+$$
+\frac{\hat \beta_i - \beta_i}{\sqrt{ \hat s_R^2 q_{ii}}} \sim t_{n-k-1}, \quad i = 0,1,2,\cdots,k.
+$$
+
+Al denominador se le suele llamar *desviación típica del estimador*, o *standard error del estimador*: 
+
+$$se(\hat \beta_i) = \sqrt{ \hat s_R^2 q_{ii}}, \quad i = 0,1,2,\cdots,k.$$
+
+Por lo que se puede escribir
 
 $$
 \frac{\hat \beta_i - \beta_i}{se(\hat \beta_i)} \rightarrow t_{n-k-1}, \quad i = 0,1,2,\cdots,k.
 $$
 
-donde 
-
-$$se(\hat \beta_i) = \sqrt{ \hat s_R^2 Q_{i+1,i+1}}, \quad i = 0,1,2,\cdots,k.$$
-
-Para deducir la expresión anterior se ha tenido en cuenta que
+Se eligen dos valores $t_a$ y $t_b$ que cumplen que:
 
 $$
-\frac{N(0,1)}{\sqrt{\frac{\chi^2_n}{n}}} \rightarrow t_n
+P(t_a \leq t_{n-k-1} \leq t_b) = 1-\alpha
+$$
+
+![](imagenes/tn.png)
+
+Por tanto se tiene que cumplir que:
+
+$$
+P \left( t_a \leq \frac{\hat \beta_i - \beta_i}{se(\hat \beta_i)} \leq t_b \right) = 1-\alpha
+$$
+
+Reordenando términos:
+
+$$
+P \left( \hat \beta_i - t_b se(\hat \beta_i)\leq \beta_i \leq \hat \beta_i - t_a se(\hat \beta_i) \right) = 1-\alpha
+$$
+
+Como la distribución es simétrica se cumple que 
+
+$$
+-ta = tb = t_{\alpha/2}
+$$
+
+$$
+\Rightarrow P \left( \hat \beta_i - t_{\alpha/2} se(\hat \beta_i) \leq \beta_i \leq \hat \beta_i + t_{\alpha/2} se(\hat \beta_i) \right) = 1-\alpha
+$$
+
+Comparando esta ecuación con $P(LI \leq \beta_i \leq LS) = 1-\alpha$, se cumple que
+
+$$
+LI = \hat \beta_i - t_{\alpha/2} se(\hat \beta_i)
+$$
+
+$$
+LS = \hat \beta_i + t_{\alpha/2} se(\hat \beta_i)
 $$
 
 Por tanto, el intervalo de confianza $100(1-\alpha)$% se obtiene como
 
 $$
-\hat \beta_i \pm t_{n-k-1;\alpha/2} se(\hat \beta_i), \quad i = 0,1,2,\cdots,k.
+\hat \beta_i \pm t_{\alpha/2} se(\hat \beta_i), \quad i = 0,1,2,\cdots,k.
 $$
-
-La distribución *t-student* es similar a la *N(0,1)*. De hecho, $\lim _{n \to \infty} t_n = N(0,1)$.
-
-```{r}
-curve(dnorm(x,0,1), from = -5, to = 5, col = "blue")
-curve(dt(x,5), add = T, col = "green")
-curve(dt(x,20), add = T, col = "red")
-```
 
 
 ## Con matrices de covarianzas
@@ -117,6 +193,12 @@ $$
 
 # Intervalo de confianza para $\sigma^2$
 
+En este caso se quiere obtener un intervalo $(LI,LS)$ tal que
+
+$$
+P(LI \leq \sigma^2 \leq LS) = 1-\alpha
+$$
+
 Partimos de la distribución en el muestreo:
 
 $$
@@ -144,26 +226,48 @@ load("datos/kidiq.Rdata")
 str(d)
 ```
 
-```{r}
-m = lm(kid_score ~ mom_iq + mom_hs, data = d)
-```
+## Varianza de $\hat{\beta}$
 
-Los parámetros estimados son:
+### Usando matrices de datos
+
+La varianza de los parámetros estimados es $var(\hat \beta_i) = \hat s_R^2 q_{i,i}$:
 
 ```{r}
-coef(m)
-# varianza residual
 n = nrow(d)
-k = 2 # numero de regresores
-(sR2 = sum(resid(m)^2)/(n-k-1))
+# variable auxiliar
+d$mom_hssi = ifelse(d$mom_hs == "si",1,0)
+# matriz X
+X = cbind(rep(1,n), d$mom_iq, d$mom_hssi)
+Xt_X = crossprod(X) # crossprod es otra manera de calcular t(X) %*% X
+Xt_y = crossprod(X,d$kid_score)
+# parametros estimados
+(beta = solve(Xt_X) %*% Xt_y)
 ```
 
-Vamos a calcular la varianza de los parámetros estimados, es decir $var(\hat \beta_i) = \hat s_R^2 Q_{i+1,i+1}$:
+```{r}
+# matriz Q = inv(t(X)*X)
+(Q = solve(Xt_X) )
+```
+
+La varianza residual es
+
+$$
+\hat{s}_R^2 = \frac{\sum e_i^2}{n-k-1}
+$$
+donde la suma de los residuos al cuadrado se puede calcular con la ecuación
+
+$$
+\sum e_i^2 = y^T y - \hat{\beta}^T (X^T y)
+$$
 
 ```{r}
-X = cbind(rep(1,n), d$mom_iq, d$mom_hs) # tambien X = model.matrix(m)
-# Q = inv(t(X)*X)
-(Q = solve(crossprod(X))) # crossprod es otra manera de calcular t(X) %*% X
+(SRC = crossprod(d$kid_score) - t(beta) %*% Xt_y )
+```
+
+```{r}
+# numero de regresores
+k = 2
+(sR2 = SRC[1,1]/(n-k-1)) # [1,1] porque es mejor tener un numero que no una matriz de tamaño [1,1]
 ```
 
 Por tanto, la matriz de varianzas de los estimadores será
@@ -178,10 +282,12 @@ Y el standard error de los estimadores, $se(\hat \beta_i)$:
 (beta_se = sqrt(diag(beta_var)))
 ```
 
+### Usando matrices de varianzas
+
 Vamos a calcular ahora el standard error de los estimadores con la matriz de varianzas de los regresores:
 
 ```{r}
-Xa = cbind(d$mom_iq, d$mom_hs)
+Xa = cbind(d$mom_iq, d$mom_hssi)
 (Qa = 1/(n-1)*solve(var(Xa)))
 ```
 
@@ -194,6 +300,7 @@ sqrt(diag(Qa)*sR2)
 Para $\hat \beta_0$:
 
 ```{r}
+# vector con las medias de cada x
 ( xmed = matrix(colMeans(Xa), ncol = 1) )
 ```
 
@@ -201,7 +308,23 @@ Para $\hat \beta_0$:
 sqrt( sR2*(1/n + 1/(n-1)*t(xmed) %*% solve(var(Xa)) %*% xmed ) )
 ```
 
-Por último, R dispone de una función para calcular la matriz de varianzas de los parámetros estimados, es decir $var(\hat \beta) = Q_{ii} \hat s_R^2$, mediante:
+### Con R
+
+```{r}
+# Se estima el modelo
+m = lm(kid_score ~ mom_iq + mom_hs, data = d)
+```
+
+```{r}
+# como curiosidad, la matriz X se puede obtener como
+X1 = model.matrix(m)
+# y los residuos
+e = m$residuals
+# por lo que podríamos obtener la matriz de varianzas de beta como
+(sum(e^2)/(n-k-1))*solve(crossprod(X1))
+```
+
+Sin embargo R dispone de una función para calcular directamente esa matriz:
 
 ```{r}
 vcov(m)
@@ -215,10 +338,12 @@ sqrt(diag(vcov(m)))
 
 Como vemos, los tres métodos dan el mismo resultado.
 
+## Intervalo de confianza para $\beta_i$
+
 El valor de la t con n-k-1 = `r n - k - 1` grados de libertad es
 
 ```{r}
-(t1 = qt(1-0.05/2, df = n-k-1))
+(ta = qt(1-0.05/2, df = n-k-1))
 ```
 
 El límite inferior (LI) y el límite superior de los intervalos será:
@@ -246,7 +371,9 @@ Si queremos otro nivel de confianza, por ejemplo, 90%:
 confint(m, level = 0.90)
 ```
 
-- En el caso de la varianza del modelo. Su estimador es:
+## Intervalo de confianza para $\sigma^2$
+
+El estimador de la varianza es:
 
 ```{r}
 sR2

@@ -23,12 +23,14 @@ $$
 
 - Para trabajar con dicho modelo tenemos un conjunto de datos de $y_i, x_{1i}, \ldots, x_{ki}, \ i = 1,2, \ldots, n$, donde $n < N$. A estos datos se le conoce como **muestra**. 
 
+![](imagenes/lm_modelo1.png)
+
 
 # Estimadores puntuales de los parámetros del modelo
 
 El modelo de la población tiene (k+2) parámetros: $\beta_0, \beta_1, \ldots, \beta_k, \sigma^2$. Lo primero que haremos es estimar un valor para dichos parámetros.
 
-Se denomina **estimador de un parámetro** a cualquier expresión que asigna un valor a dicho parámetro. Y se denomina **estimación** al valor asignado.
+Se denomina **estimador de un parámetro** a cualquier expresión que asigna un valor a dicho parámetro. Y se denomina **estimación** al valor obtenido cuando aplicamos dicha *fórmula* a los datos de la muestra.
 
 Por ejemplo, podríamos utilizar los siguientes estimadores (se indica poniendo el símbolo $\hat \square$):
 
