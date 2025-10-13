@@ -1,13 +1,13 @@
 ---
 title: "Contrastes de hipótesis"
 output: 
-  pdf_document:
-    number_sections: true
-    toc: true
   html_document:
     number_sections: true
     toc: true
     toc_float: true
+  pdf_document:
+    number_sections: true
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -155,13 +155,13 @@ $$
 El estadístico del contraste que se va a utilizar es:
 
 $$
-\frac{(n-k-1)\hat s_R^2}{\sigma^2} \rightarrow \chi^2_{n-k-1}
+\frac{(n-k-1)\hat s_R^2}{\sigma^2} \sim \chi^2_{n-k-1}
 $$
 
 Por tanto, si la hipótesis nula es cierta,
 
 $$
-\chi^2_0 = \frac{(n-k-1)\hat s_R^2}{\sigma^2_0} \rightarrow \chi^2_{n-k-1}
+\chi^2_0 = \frac{(n-k-1)\hat s_R^2}{\sigma^2_0} \sim \chi^2_{n-k-1}
 $$
 
 Como ejemplo, se quiere contrastar
@@ -197,10 +197,10 @@ curve(df(x,10,5), from = 0, to = 10, col = "blue")
 
 ## Descomposición de la suma de cuadrados
 
-Tenemos el modelo
+Sea el modelo
 
 $$
-y_i = \hat \beta_0 + \hat \beta_1 x_{1i} + \cdots + \hat \beta_k x_{ki} + e_i = \hat y_i + e_i
+y_i = \hat \beta_0 + \hat \beta_1 x_{1i} + \cdots + \hat \beta_k x_{ki} + e_i = \hat y_i + e_i, \ i = 1,2,\cdots,n
 $$
 
 Restando la media $\bar y = \sum y_i / n$:
@@ -310,7 +310,7 @@ $$
 \frac{\frac{SCM/\sigma^2}{k}}{\frac{SCR/\sigma^2}{n-k-1}} \sim F_{k, n-k-1} \Rightarrow F_0 = \frac{SCM/k}{SCR/(n-k-1)} \sim F_{k, n-k-1}
 $$
 
-Si $\beta_1 = \beta_2 = \cdots = \beta_k = 0$, SCM $\approx$ 0 y el estadístico tomará valores pequeños; cuando algún $\beta$ sea distinto de cero, SCM > SCR y el estadístico irá tomando cada vez valores más altos. Por tanto se rechazará la hipótesis nula para valores grandes del estadístico:
+Si $\beta_1 = \beta_2 = \cdots = \beta_k = 0$, SCM $\approx$ 0 y el estadístico debería tomar valores pequeños; cuando algún $\beta_i$ sea distinto de cero, el estadístico irá tomando cada vez valores más altos. Por tanto se rechazará la hipótesis nula para valores grandes del estadístico:
 
 - si $F_0 > F_\alpha$: se rechaza $H_0$
 - si $F_0 \leq F_\alpha$: no se rechaza $H_0$
@@ -364,7 +364,7 @@ H_0 : \text{Los modelos son iguales} \\
 H_1 : \text{Los modelos NO son iguales}
 $$
 
-Si el estadístico toma valores pequeños quiere decir que la suma de cuadrados residual es parecida en ambos modelos, que es lo que debería pasar si $H_0$ es cierta, por lo se considera que los modelos son equivalentes. Por tanto, se rechazará la hipótesis nula para valores grandes del estadístico:
+Si $H_0$ es cierta el estadístico debería tomar valores pequeños, es decir, la suma de cuadrados residual es parecida en ambos modelos, por lo se considera que los modelos son equivalentes. Por tanto, se rechazará la hipótesis nula para valores grandes del estadístico:
 
 - si $F_0 > F_\alpha$: se rechaza $H_0$
 - si $F_0 \leq F_\alpha$: no se rechaza $H_0$
@@ -468,7 +468,9 @@ $$
 Por tanto:
 
 $$
+\boxed{
 \hat \beta_2 - \hat \beta_3 \sim N(\beta_2 - \beta_3, \sigma^2 (Q_{2,2} + Q_{3,3} - 2 Q_{2,3})
+}
 $$
 
 Es decir:

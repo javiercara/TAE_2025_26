@@ -32,7 +32,7 @@ X = model.matrix(m)
 head(X)
 ```
 
-- Parámetros estimados $B$:
+- Parámetros estimados $\hat{\beta}$:
 
 ```{r}
 coefficients(m)
@@ -82,10 +82,10 @@ m_summ$r.squared
 El modelo que queremos estimar es
 
 \begin{equation}
-y_i = b_1 x_{1i} + b_2 x_{2i} + b_3 x_{3i} + e_i, \ i = 1,2,\cdots,n
+y_i = \beta_1 x_{1i} + \beta_2 x_{2i} + \beta_3 x_{3i} + u_i, \ i = 1,2,\cdots,n
 \end{equation}
 
-es decir, tenemos que $b_0 = 0$. En forma matricial tendríamos $y = X B + e$, donde:
+es decir, tenemos que $\beta_0 = 0$. En forma matricial tendríamos $y = X \beta + e$, donde:
 
 \begin{equation}
 X = 
@@ -96,9 +96,9 @@ x_{12} & x_{22} & x_{32} \\
 x_{1n} & x_{2n} & x_{3n} \\
 \end{bmatrix}
 , \quad
-B = 
+\beta = 
 \begin{bmatrix}
-b_1 \\ b_2 \\ b_3
+\beta_1 \\ \beta_2 \\ \beta_3
 \end{bmatrix}
 \end{equation}
 
@@ -150,36 +150,36 @@ Por tanto, el modelo sin ordenada en el origen tiene menor $R^2$.
 
 # Formulas y expresiones en la función lm()
 
-Modelo *lineal* hace referencia a que la ecuación del modelo es una función lineal de los parámetros $b_0$, $b_1$, $b_2$, $\cdots$, $b_k$. Modelos en apariencia complicados pueden ser considerados como un modelo lineal. Por ejemplo:
+Modelo *lineal* hace referencia a que la ecuación del modelo es una función lineal de los parámetros $\beta_0$, $\beta_1$, $\beta_2$, $\cdots$, $\beta_k$. Modelos en apariencia complicados pueden ser considerados como un modelo lineal. Por ejemplo:
 
 - polinomios:
 
 \begin{equation}
-y = b_0 + b_1 x + b_2 x^2 + e \Rightarrow y = b_0 + b_1 x_1 + b_2 x_2
+y = \beta_0 + \beta_1 x + \beta_2 x^2 + u \Rightarrow y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + u
 \end{equation}
 
 - modelos con funciones en los regresores
 
 \begin{equation}
-y = b_0 + b_1 x + b_2 log x + e \Rightarrow y = b_0 + b_1 x_1 + b_2 x_2
+y = \beta_0 + \beta_1 x + \beta_2 log x + u \Rightarrow y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + u
 \end{equation}
 
 - modelos con interacción:
 
 \begin{equation}
-y = b_0 + b_1 x_1 + b_2 x_2 + b_3 x_1 x_2 + e 
+y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1 x_2 + u
 \end{equation}
 
 - este modelo no es lineal
 
 \begin{equation}
-y = b_0 + b_1 x^{b_2} + e
+y = \beta_0 + \beta_1 x^{\beta_2} + u
 \end{equation}
 
 En este apartado se va a estudiar como introducir estas regresiones lineales en R. Por ejemplo, queremos realizar la siguiente regresión:
 
 \begin{equation}
-y_i = b_0 + b_1 (x_{1i} + x_{2i}) + e_i
+y_i = \beta_0 + \beta_1 (x_{1i} + x_{2i}) + u_i
 \end{equation}
 
 En R se expresa mediante el operador $\mathrm I()$:
@@ -197,13 +197,13 @@ y ~ x1 + x2
 corresponde al modelo:
 
 \begin{equation}
-y_i = b_0 + b_1 x_{1i} + b_2 x_{2i} + e_i
+y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + u_i
 \end{equation}
 
 Otro ejemplo es el modelo:
 
 \begin{equation}
-y_i = b_0 + b_1 x_{1i} + b_2 x_{1i}^2 + e_i
+y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 x_{1i}^2 + u_i
 \end{equation}
 
 En R este modelo se expresa utilizando:
@@ -223,7 +223,7 @@ significa interacción y no el cuadrado del regresor.
 Es frecuente incluir funciones matemáticas en el modelo de regresión. Por ejemplo:
 
 \begin{equation}
-\log(y_i) = b_0 + b_1 x_{1i} + b_2 e^{x_{2i}} + e_i
+\log(y_i) = \beta_0 + \beta_1 x_{1i} + \beta_2 e^{x_{2i}} + u_i
 \end{equation}
 
 En R, este modelo se indica:
@@ -250,7 +250,7 @@ points(d$mom_iq, fitted.values(m), col = "red", pch = 19)
 Es conveniente recordar que a pesar de que hay un término cuadrático se trata de un modelo lineal ya que el modelo que se estima es en realidad
 
 \begin{equation}
-kid\_score_i = b_0 + b_1 mom\_iq_i + b_2 z_i + e_i
+kid\_score_i = \beta_0 + \beta_1 mom\_iq_i + \beta_2 z_i + u_i
 \end{equation}
 
 donde $z_i = mom\_iq_i^2$.
