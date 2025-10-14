@@ -43,6 +43,18 @@ output:
 3. Aplicaciones del modelo de regresión lineal
     a. [Cálculo de predicciones](lm_aplicaciones_prediccion.html) [(pdf)](lm_aplicaciones_prediccion.pdf)
     b. [Análisis de las relaciones entre variables](lm_aplicaciones_explicacion.html) [(pdf)](lm_aplicaciones_explicacion.pdf)
+4. Bondad del ajuste
+    a. [Bondad del ajuste](lm_bondad_ajuste.html) [(pdf)](lm_bondad_ajuste.pdf)
+5. Diagnosis
+    a. [Análisis de los residuos del modelo](lm_diagnosis.html) [(pdf)](lm_diagnosis.pdf)
+6. Extensiones del modelo lineal
+    a. [Regresores polinómicos](lm_extensiones_polinomios.html) [(pdf)](lm_extensiones_polinomios.pdf)
+7. Ejemplo
+    a. [Ejemplo completo de regresión lineal](lm_ejemplo1.html) [(pdf)](lm_ejemplo1.pdf)
+8. Validación cruzada
+    a. [Validación cruzada](lm_validacion_cruzada.html) [(pdf)](lm_validacion_cruzada.pdf)
+9. Comparación de modelos y selección de variables
+    a. [Comparación de modelos y selección de variables](lm_seleccion_variables.html) [(pdf)](lm_seleccion_variables.pdf)    
     
 10. Apéndices
     a. [Derivada de un escalar respecto de un vector](lm_apendice_derivadas.html) [(pdf)](lm_apendice_derivadas.pdf)

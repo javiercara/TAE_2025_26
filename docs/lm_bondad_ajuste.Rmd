@@ -1,0 +1,164 @@
+---
+title: "Bondad del ajuste en el modelo de regresión lineal"
+output: 
+  pdf_document:
+    number_sections: true
+    toc: true
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+---
+
+
+
+Se quiere evaluar como de bueno es el modelo que se ha estimado. La calidad del modelo se puede calcular utilizando diferentes métricas:
+
+# Coeficiente de determinacion $R^2$
+
+Dado unos datos $(x_{1i}, \ldots, x_{ki}, y_i), \ i = 1,\ldots,n$, se estima el modelo de regresión lineal
+
+$$
+y_i = \beta_0 + \beta_1 x_{1i} + \cdots + \beta_k x_{ki} + u_i
+$$
+
+obteniendo
+
+$$
+y_i = \hat \beta_0 + \hat \beta_1 x_{1i} + \cdots + \hat \beta_k x_{ki} + e_i
+$$
+
+Es usual definir
+
+$$
+\hat y_i = \hat \beta_0 + \hat \beta_1 x_{1i} + \cdots + \hat \beta_k x_{ki}
+$$
+
+por lo que
+
+$$
+y_i = \hat y_i + e_i
+$$
+
+Ya hemos visto que a partir de esta expresión se obtiene:
+
+$$
+\sum_{i=1}^n (y_i - \bar{y})^2 = \sum_{i=1}^n (\hat y_i - \bar{y})^2 + \sum_{i=1}^n e_i^2
+$$
+
+$$
+SCT = SCM + SCR
+$$
+
+donde:
+
+- SCT: suma de cuadrados total
+- SCM: suma de cuadrados correspondientes al modelo.
+- SCR: suma de cuadrados correspondientes a los residuos.
+
+Es decir, dividimos la suma de cuadrados total entre modelo y residuos. Por tanto es lógico definir un coeficiente dividiendo *SCM* entre *SCT*, es decir, calcular el porcentaje de la suma de cuadrados que corresponde al modelo. Dicho coeficiente se llama **coeficiente de determinación**:
+
+$$
+R^2 = \frac{SSM}{SST} = 1 - \frac{SSE}{SST}
+$$
+
+Este coeficiente toma valores entre 0 y 1:
+
+- Si el modelo es bueno, la suma de cuadrados del modelo será grande, $R^2 \approx 1$.
+- Si el modelo es malo, los suma de cuadrados del modelo será pequeña, $R^2 \approx 0$.
+
+# Coeficiente de determinacion ajustado $R_a^2$
+
+Sea el modelo
+
+$$
+y = \beta_0 + \beta_1 x_{1} + \cdots + \beta_{k} x_{k} + u
+$$
+
+El coeficiente de determinación para este modelo es
+
+$$
+R^2 = 1 - \frac{SSE}{SST} = 1 - \frac{(n-k-1) \hat s_R^2}{(n-1)\hat s_y^2}
+$$
+
+Supongamos que se añade un regresor más $x_{k+1}$  que no aporta información al modelo, es decir, $\beta_{k+1} = 0$. En principio el modelo sería:
+
+$$
+y = \beta_0 + \beta_1 x_{1} + \cdots + \beta_{k} x_{k} + \beta_{k+1} x_{k+1} + u
+$$
+
+y su coeficiente de determinación, $R_1^2$, sería:
+
+$$
+R^2_1 = 1 - \frac{(n-(k+1)-1) \hat s_R^2}{(n-1)\hat s_y^2}  = 1 - \frac{(n-(k+1)-1) \hat s_R^2}{(n-1)\hat s_y^2}
+$$
+
+En principio se debería cumplir que $R^2 = R_1^2$, ya que es ambos modelos son iguales. Sin embargo, 
+
+$$
+(n-(k+1)-1) < (n-k-1)
+$$
+$$
+(n-(k+1)-1) \hat s_R^2 < (n-k-1) \hat s_R^2
+$$
+
+$$
+\frac{(n-(k+1)-1) \hat s_R^2}{(n-1)\hat s_y^2} < \frac{(n-k-1) \hat s_R^2}{(n-1)\hat s_y^2}
+$$
+
+$$
+ - \frac{(n-(k+1)-1) \hat s_R^2}{(n-1)\hat s_y^2} > - \frac{(n-k-1) \hat s_R^2}{(n-1)\hat s_y^2}
+$$
+
+$$
+1 - \frac{(n-(k+1)-1) \hat s_R^2}{(n-1)\hat s_y^2} > 1 - \frac{(n-k-1) \hat s_R^2}{(n-1)\hat s_y^2}
+$$
+
+
+$$
+R_1^2 >  R^2
+$$
+
+Por tanto, el coeficiente de determinación aumenta al aumentar el número de regresores *k*, aunque esos regresores no aporten información al modelo. Por este motivo se define el coeficiente de determinación ajustado o corregido:
+
+$$
+R_a^2 = 1 - \frac{\hat s_R^2}{\hat s_y^2} = 1 - \frac{SCR/(n-k-1)}{SCT/(n-1)} = 1 - \frac{SCR}{SCT} \frac{(n-1)}{(n-k-1)}
+$$
+
+Este coeficiente intenta intenta corregir este fenómeno. Cuando comparamos modelos con diferente número de regresores es preferible utilizar $R^2_a$.
+
+# Ejemplo 
+
+```{r}
+load("datos/kidiq.Rdata")
+str(d)
+```
+
+```{r}
+m1 = lm(kid_score ~ mom_iq + mom_age + mom_hs + mom_work, data = d)
+summary(m1)
+```
+
+```{r}
+m2 = lm(kid_score ~ mom_iq + mom_age + mom_hs, data = d)
+summary(m2)
+```
+
+Se tiene que $R_{a1}^2 = 0.2103$, $R_{a2}^2 = 0.2095$. Según acabamos de comprobar, el R-cuadrado de m1 es mayor ya que utiliza más regresores. La cuestión es si esta diferencia se debe a que m1 es mejor que m2 o ambos son comparables. Para comprobarlo utilizamos el contraste
+
+- $H_0$ : Los modelos m1 y m2 son equivalentes.
+- $H_1$ : Los modelos m1 y m2 NO son equivalentes.
+
+```{r}
+anova(m1,m2)
+```
+
+ El p-valor > 0.05, no se rechaza la hipótesis nula, los modelos son equivalentes. Seguramente se debe a que la variable *mom_work* no es significativa, no aporta información:
+ 
+```{r}
+summary(m1)
+```
+ 
+
+
+

@@ -157,7 +157,7 @@ $$
 y_p \sim N(x_p^T \beta, \sigma^2)
 $$
 
-Nos gustaría construir un intervalo $(LI,LS)$ para $y_p$ tal que:
+Como $y_p$ es una variable aleatoria, la predicción tiene que ser en forma de intervalo. Nos gustaría construir un intervalo $(LI,LS)$ para $y_p$ tal que:
 
 $$
 P(LI \leq y_p \leq LS) = 1-\alpha
