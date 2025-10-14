@@ -3,12 +3,12 @@ title: "Técnicas Avanzadas de Estadística"
 author: "[Javier Cara](https://www.javiercara.com/)"
 date: "curso 2025-26"
 output: 
+  pdf_document:
+    toc: false
   html_document:
     number_sections: true
     toc: false
     toc_depth: 2
-  pdf_document:
-    toc: false
 ---
 
 <br>
