@@ -3,12 +3,12 @@ title: "Técnicas Avanzadas de Estadística"
 author: "[Javier Cara](https://www.javiercara.com/)"
 date: "curso 2025-26"
 output: 
-  pdf_document:
-    toc: false
   html_document:
     number_sections: true
     toc: false
     toc_depth: 2
+  pdf_document:
+    toc: false
 ---
 
 <br>
@@ -61,6 +61,27 @@ output:
     b. [Matriz de covarianzas](lm_apendice_covarianzas.html) [(pdf)](lm_apendice_covarianzas.pdf)
     c. [Variable aleatoria normal](lm_apendice_normal.html) [(pdf)](lm_apendice_normal.pdf)
     d. [Distribución t-student](lm_apendice_tn.html) [(pdf)](lm_apendice_tn.pdf)
+    
+## Otros modelos de regresión
+
+### Regresión logística
+
+1. Modelo de regresión logística
+    a. [Modelo con un regresor](logit_modelo_1regresor.html) [(pdf)](logit_modelo_1regresor.pdf)
+    b. [Modelo con K regresores](logit_modelo_Kregresores.html) [(pdf)](logit_modelo_Kregresores.pdf)
+    c. [Regresores cualitativos](logit_modelo_cualitativas.html) [(pdf)](logit_modelo_cualitativas.pdf)
+2. Inferencia en el modelo de regresión logística
+    a. [Estimadores y su distribución. Inferencia](logit_inferencia.html) [(pdf)](logit_inferencia.pdf)
+    b. [Bootstrap](logit_inferencia_bootstrap.html) [(pdf)](logit_inferencia_bootstrap.pdf)
+3. Aplicaciones del modelo de regresión logística
+    a. [Cálculo de predicciones](logit_aplicaciones_prediccion.html) [(pdf)](logit_aplicaciones_prediccion.pdf)
+    b. [Análisis de las relaciones entre variables](logit_aplicaciones_explicacion.html) [(pdf)](logit_aplicaciones_explicacion.pdf)
+4. Bondad de ajuste
+    a. [Bondad del ajuste](logit_bondadajuste.html) [(pdf)](logit_bondadajuste.pdf)
+5. Residuos
+    a. [Análisis de los residuos del modelo](logit_diagnosis.html) [(pdf)](logit_diagnosis.pdf)
+6. Apéndices
+    a. [Regresión logística binomial](logit_modelo_binomial.html) [(pdf)](logit_modelo_binomial.pdf)
 
 # Bibliografía
 
