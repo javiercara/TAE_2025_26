@@ -243,7 +243,7 @@ nlme::fdHess(beta,logit_logL, y = d$InMichelin, X)
 El algoritmo de Newton-Raphson para la función log-verosimilitud es:
 
 $$
-\beta_{k+1} = \beta_k - \alpha H^{-1}_k G_k
+\beta_{k+1} = \beta_k - \alpha_k H^{-1}_k G_k
 $$
 
 donde $\beta = [\beta_0 \ \beta_1 \ \cdots \beta_k]^T$. Este algoritmo para la función log-verosimilitud se puede implementar en R de manera sencilla:

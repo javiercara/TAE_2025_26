@@ -58,9 +58,11 @@ $$
 P(Decision_i = 1) = \frac{exp(\beta_0+\beta_1)}{1 + exp(\beta_0+\beta_1)}
 $$
 
-Por tanto, si $\beta_1 = 0$, entonces P(Decision = 1 | Homeowner = Y) = P(Decision = 1 | Homeowner = N). 
+Por tanto, $\beta_1$ representa diferencias de probabilidad de que se apruebe el crédito entre personas con casa y personas sin casa en propiedad.
 
-Si $\beta_1 > 0$, entonces:
+* Si $\beta_1 = 0$, entonces P(Decision = 1 | Homeowner = Y) = P(Decision = 1 | Homeowner = N). 
+
+* Si $\beta_1 > 0$, entonces:
 
 $$
 \beta_0 < \beta_0 + \beta_1 \\
@@ -77,7 +79,9 @@ $$
 P(Decision = 1 | Homeowner = N) < P(Decision = 1 | Homeowner = Y)
 $$
 
-Estimamos el modelo. Recordemos que la variable respuesta toma valores 0 y 1. Por tanto si definimos:
+Por tanto, si $\beta_1 >0$, la probabilidad de que se apruebe el crédito si se posee una casa es mayor que si no se posee.
+
+Veamos que se obtiene con R. Recordemos que la variable respuesta toma valores 0 y 1. Por tanto si definimos:
 
 ```{r}
 Decision1 = ifelse(d$Decision == "Approve", 1, 0)

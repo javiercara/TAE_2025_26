@@ -117,13 +117,23 @@ donde $\beta_A$ es un subconjunto de $\beta$. Supongamos que $dim(\beta_A) = m$ 
 
 $$ H_0 : \beta_B = 0, \quad H_1: \beta_B \neq 0 $$
 
-En el caso de que la hipótesis nula sea cierta, se tiene que:
+Se tiene que:
+
+$$
+D_A - D_1 \sim \chi^2_{k-m}
+$$
+
+donde $D_1$ es la desviación del modelo con parámetros $\beta$ y $D_A$ es la desviación del modelo con parámetros $\beta_A$:
+
+- $D_1 \sim \chi^2_{n-k}$.
+- $D_A \sim \chi^2_{n-m}$.
+- Se sabe que $\chi^2_a + \chi^2_b \sim \chi^2_{a+b} \Rightarrow D_A - D_1 \sim \chi^2_{(n-m)-(n-k)} = \chi^2_{k-m}$.
+
+Por tanto, para resolver el contraste se utiliza el estadístico
 
 $$
 G = D_A - D_1 \sim \chi^2_{k-m}
 $$
-
-donde $D_1$ es la desviación del modelo con parámetros $\beta$ y $D_A$ es la desviación del modelo con parámetros $\beta_A$.
 
 - Si $G \geq \chi^2_{\alpha}$ se rechaza la hipótesis nula.
 - Si $G < \chi^2_{\alpha}$ no se rechaza la hipótesis nula.
@@ -159,9 +169,18 @@ $$
 En este caso:
 
 ```{r}
+D0
+D1
 (G = D0 - D1)
 k = length(coef(m1))
 (pvalor = 1-pchisq(G, k-1))
 ```
 
 Luego el modelo es muy adecuado.
+
+Como vemos, las desviaciones necesarias para resolver este contraste se indican en el *summary()*.
+
+```{r}
+summary(m1)
+```
+
