@@ -205,3 +205,31 @@ Hemos hecho la predicción de $\hat \pi_p$, probabilidades, pero queremos predec
 En este caso, como $\hat{\pi}_{p} = `r round(pi_p,2)`$, la predicción es que ese restaurante va a estar incluido en la Guía Michelín. Además, el intervalo de confianza está muy por encima de 0.5, luego tenemos mucha confianza en esa decisión.
 
 El límite de 0.5 que hemos utilizado es totalmente arbitrario y se puede modificar según el criterio del autor del análisis.
+
+# Intervalo de confianza para la predicción utilizando bootstrap
+
+```{r warning=FALSE}
+set.seed(567)
+B = 500
+n = nrow(d)
+yp = rep(0,B)
+for (b in 1:B){
+  # remuestrear datos
+  posb = sample(1:n, replace = T)
+  db = d[posb,]
+  
+  # estimar modelo b
+  mb = glm(InMichelin ~ Food + Decor + Service + Price, 
+           data = db,family = binomial)
+  
+  # se guarda la prediccion
+  yp[b] = predict(mb, newdata = xp_df, type = "response")
+}
+# prediccion puntual
+mean(yp)
+# valor del standard error calculado con bootstrap (de la respuesta)
+sd(yp)
+# intervalo de prediccion
+quantile(yp, probs = c(alfa/2,1-alfa/2))
+```
+

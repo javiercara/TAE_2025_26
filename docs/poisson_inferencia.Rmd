@@ -1,0 +1,156 @@
+---
+title: 'Estimadores y su distribución. Inferencia'
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+---
+
+# Distribución asintótica de los estimadores
+
+Para muestras grandes, los estimadores de máxima verosimilitud tienen distribución asintótica normal. En concreto, se tiene que
+
+$$
+\hat \beta \sim N(\beta, I(\hat \beta))
+$$
+
+donde $I(\beta)$ se denomina Matriz de Información de Fisher observada:
+
+$$
+I(\beta) = -H_{logL}^{-1}(\beta)
+$$
+es decir, la inversa del hessiano de la función de verosimilitud (con signo negativo):
+
+$$
+H_{logL}(\beta) = - X^T W X
+$$
+
+En el caso de la propiedad anterior, la matriz $I(\beta)$ está evaluada en el valor que maximiza la verosimilitud. Por tanto, cada estimador de manera individual se distribuye como:
+
+$$
+\hat \beta_j \sim N(\beta_j, Var(\hat \beta_j))
+$$
+
+donde 
+
+$$
+Var(\hat \beta_j) = I_{(j+1,j+1)}(\hat \beta), \quad j = 0,1,\ldots,k
+$$
+
+es decir, los elementos de la diagonal de la matriz $I(\hat \beta)$. Al igual que en regresión lineal, el *standard error* de los estimadores es:
+
+$$
+se(\hat \beta_j) = \sqrt{Var(\hat \beta_j)}
+$$
+
+# Contrastes de hipótesis individuales
+
+Para resolver contrastes del tipo:
+
+$$
+H_0 : \beta_j = 0
+$$
+$$
+H_1 : \beta_j \neq 0
+$$
+
+se utiliza la distribución asintóntica mostrada anteriormente. Por tanto, si la hipótesis nula es cierta se tiene:
+
+$$
+\frac{\hat \beta_j}{se(\hat \beta_j)} \sim N(0,1)
+$$
+
+A este método se lo conoce como método de Wald, o estadístico de [Wald](https://en.wikipedia.org/wiki/Abraham_Wald).
+
+Con R:
+
+Estimamos los parámetros del modelo (se van a utilizar las funciones de R del archivo [poisson_funciones.R](funciones/poisson_funciones.R)):
+
+```{r}
+# cargamos las funciones que vamos a utilizar
+source("funciones/poisson_funciones.R")
+d = read.csv("datos/Aircraft_Damage.csv")
+d$bomber = factor(d$bomber, labels = c("A4","A6"))
+```
+
+```{r}
+m = glm(damage ~ bomber + load + experience, data = d, family = poisson)
+summary(m)
+```
+
+```{r}
+beta_e = coef(m)
+# matriz de información de Fisher
+I = -solve(poisson_hess(beta_e,model.matrix(m)))
+# standard error de los parámetros estimados
+(beta_se = sqrt(diag(I)))
+```
+
+```{r}
+# valor del estadístico del contraste
+(z = beta_e/beta_se)
+```
+
+```{r}
+# pvalores
+2*(1 - pnorm(abs(z)))
+```
+
+# Intervalos de confianza
+
+Partimos del estadístico de Wald:
+
+$$
+\frac{\hat \beta_j - \beta_j}{se(\hat \beta_j)} \sim N(0,1)
+$$
+
+Por tanto, el intervalo será:
+
+$$
+\hat \beta_j - z_{\alpha/2}se(\hat \beta_j) \leq \beta_j \leq \hat \beta_j + z_{\alpha/2}se(\hat \beta_j)
+$$
+
+```{r}
+alfa = 0.05
+data.frame(LI = beta_e - qnorm(1-alfa/2)*beta_se,
+LS = beta_e + qnorm(1-alfa/2)*beta_se)
+```
+
+```{r}
+confint(m, level = 1-alfa)
+```
+
+# Bootstrap
+
+```{r warning=FALSE}
+set.seed(99)
+B = 500
+n = nrow(d)
+beta_B = matrix(0, nrow = B, ncol = 4)
+for (b in 1:B){
+  pos_b = sample(1:n, n, replace = T)
+  d_b = d[pos_b,]
+  m_b = glm(damage ~ bomber + load + experience, data = d_b, family = poisson)
+  beta_B[b,] = coef(m_b)
+}
+```
+
+- Standard errors calculados con bootstrap:
+
+```{r}
+apply(beta_B,2,sd)
+```
+
+- Invervalos de confianza calculados con bootstrap:
+
+```{r}
+alfa = 0.05
+apply(beta_B,2,quantile, probs = c(alfa/2,1-alfa/2))
+```
+
+
+

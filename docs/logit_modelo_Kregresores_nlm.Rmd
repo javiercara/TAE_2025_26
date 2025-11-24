@@ -293,27 +293,7 @@ logit_logL_optim = function(beta,y,X){
 Utilizando el mismo punto de partida que para el algoritmo Newton:
 
 ```{r}
-mle = optim(par = beta_i, fn = logit_logL_optim, y = d$InMichelin, X = X, gr = logit_grad, method = "BFGS", hessian = TRUE, control = list(trace=1, REPORT = 1, maxit = 200))
-mle$par
-```
-
-## Estimacion con nlm
-
-La función que vamos a minimizar es:
-
-```{r}
-logit_logL_nlm = function(beta,y,X){
-  res = -logit_logL(beta,y,X)
-  attr(res,"gradient") = logit_grad(beta,y,X)
-  attr(res,"hessian") = logit_hess(beta,X)
-  return(res)
-}
-```
-
-Utilizando el mismo punto de partida que para el algoritmo Newton:
-
-```{r}
-mle = nlm(f = logit_logL_nlm, p = beta_i, y = d$InMichelin, X = X)
+mle = optim(par = beta_i, fn = logit_logL_optim, y = d$InMichelin, X = X, gr = NULL, method = "BFGS", hessian = TRUE, control = list(trace=1, REPORT = 1, maxit = 200))
 mle$par
 ```
 

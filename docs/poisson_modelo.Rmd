@@ -1,0 +1,186 @@
+---
+title: 'Modelo de regresión de Poisson'
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+---
+
+# Modelo
+
+Durante la guerra del Vietnam, la armada de los Estados Unidos empleó diferentes tipos de bombarderos en misiones para destruir puentes, carreteras, y otros objetivos de transporte. Entre ellos destacaban el *A-4 Skyhawk* y el *A-6 Intruder*. El archivo *Aircraft_Damage.csv* contiene la información de 30 misiones donde participaron estos aviones:
+
+```{r}
+d = read.csv("datos/Aircraft_Damage.csv")
+str(d)
+```
+
+- damage: numero de zonas donde el bombardero presentaba daños debido a las defensas antibombarderos;
+- bomber: variable cualitativa, vale 0 para el A-4 y 1 para el A-6;
+- load: carga de bombas (en toneladas);
+- experience: número de meses de experiencia en vuelo de la tripulación.
+
+El objetivo es utilizar un modelo que relacione el número de zonas con daño y el resto de variables. En este caso la variable respuesta no es normal; y tampoco es binomial. Cuando la variable respuesta sea del tipo "número de veces que ocurre algo" se utiliza una variable de Poisson. 
+
+El modelo de Poisson se define como
+
+$$
+P(Y_i = y_i) = \frac{e^{-\lambda_i} \lambda_i^{y_i}}{y_i!}, \quad y_i = 0,1,2,3,\ldots
+$$
+
+donde:
+
+$$
+\lambda_i = exp(\beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \cdots + \beta_k x_{ki}) = exp(x_i^T \beta)
+$$
+
+Esta última expresión se puede reescribir como:
+
+$$
+\lambda_i = exp(x_i^T \beta)
+$$
+
+ya que
+
+$$
+\beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i} + \cdots + \beta_k x_{ki} =
+\begin{bmatrix}
+1 & x_{1i} & x_{2i} & \cdots & x_{ki}
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1 \\ \beta_2 \\ \cdots \\ \beta_k
+\end{bmatrix}
+= x_i^T \beta
+$$
+
+# Estimación de los parámetros del modelo: máxima verosimilitud
+
+## La función de verosimilitud
+
+La función de verosimilitud es la probabilidad de obtener la muestra dada. Por tanto, dada la muestra $\{y_1,y_2, \cdots, y_n \}$, la probabilidad de obtener dicha muestra es:
+
+$$
+P(Y_1 = y_1, Y_2 = y_2, \cdots, Y_n = y_n) = \prod_{i=1}^{n} P(Y_i = y_i) = \prod_{i=1}^{n} \frac{e^{-\lambda_i} \lambda_i^{y_i}}{y_i!} 
+$$
+
+Se denomina función de verosimilitud a la probabilidad de obtener la muestra:
+
+$$
+L(\beta) = \prod_{i=1}^{n} \frac{e^{-\lambda_i} \lambda_i^{y_i}}{y_i!}
+$$
+
+El logaritmo de la función de verosimilitud es:
+
+$$
+log L(\beta) = log \prod_{i=1}^{n} \frac{e^{-\lambda_i} \lambda_i^{y_i}}{y_i!} = \sum_{i=1}^{n}(-\lambda_i + y_i log(\lambda_i) - log(y_i!))
+$$
+
+## El máximo de la función de verosimilitud
+
+Derivando e igualando a cero:
+
+$$
+\frac{\partial logL(\beta)}{\partial \beta} 
+=
+\begin{bmatrix}
+\frac{\partial logL(\beta)}{\partial \beta_0} \\ 
+\frac{\partial logL(\beta)}{\partial \beta_1} \\
+\cdots \\
+\frac{\partial logL(\beta)}{\partial \beta_k} \\
+\end{bmatrix}
+= 
+X^T(y - \lambda)
+=
+\begin{bmatrix}
+0 \\
+0 \\
+\cdots \\
+0
+\end{bmatrix}
+$$
+
+donde $X$:
+
+$$
+X = 
+\begin{bmatrix}
+1 & x_{11} & \cdots & x_{k1} \\
+1 & x_{12} & \cdots & x_{k2} \\
+\cdots & \cdots & \cdots & \cdots \\
+1 & x_{1n} & \cdots & x_{kn} \\
+\end{bmatrix}
+, \quad
+y = 
+\begin{bmatrix}
+y_1 \\ y_2 \\ \cdots \\ y_n
+\end{bmatrix}
+, \quad
+\lambda = 
+\begin{bmatrix}
+\lambda_1 \\ \lambda_2 \\ \cdots \\ \lambda_n
+\end{bmatrix}
+$$
+
+El máximo de la función log-verosimilitud se tiene que hacer numéricamente.
+
+En los siguientes apartados se va a necesitar la matriz de derivadas segundas o matriz hessiana. Su valor es:
+
+$$
+\frac{\partial log L(\beta)}{\partial \beta \partial \beta^T}
+=
+\begin{bmatrix}
+\frac{\partial^2 logL(\beta)}{\partial \beta_0^2} &  \frac{\partial^2 logL(\beta)}{\partial \beta_0 \partial \beta_1} & \cdots & \frac{\partial^2 logL(\beta)}{\partial \beta_0 \partial \beta_k} \\
+\frac{\partial^2 logL(\beta)}{\partial \beta_1 \partial \beta_0} & \frac{\partial^2 logL(\beta)}{\partial \beta_1^2} & \cdots & \frac{\partial^2 logL(\beta)}{\partial \beta_1 \partial \beta_k} \\
+\cdots & \cdots & \cdots & \cdots \\
+\frac{\partial^2 logL(\beta)}{\partial \beta_k \partial \beta_0} & \frac{\partial^2 logL(\beta)}{\partial \beta_k \partial \beta_1 } & \cdots & \frac{\partial^2 logL(\beta)}{\partial \beta_k^2}
+\end{bmatrix}
+=
+- X^T W X
+$$
+
+donde $W$ es una matriz diagonal con
+
+$$
+W_{ii} = \lambda_i
+$$
+
+## Funciones en R
+
+Las funciones que calculan el logaritmo de la verosimilitud, el gradiente y el hessiano se han incluido en el archivo [poisson_funciones.R](funciones/poisson_funciones.R).
+
+```{r}
+source("funciones/poisson_funciones.R")
+beta = c(-0.5,0.5,0.5,-0.05)
+y = d$damage
+X = cbind(rep(1,nrow(d)), d[,2:4])
+poisson_logL(beta,y,X)
+poisson_grad(beta,y,X)
+poisson_hess(beta, X)
+nlme::fdHess(beta,poisson_logL, y = d$damage, X)
+```
+
+## Cálculo del máximo mediante el algoritmo BFGS
+
+La función optim() solo minimiza. Pero como calcular el máximo de logL equivale a minimizar -logL, se define la función logL_optim en la que simplemente se le cambia el signo a la verosimilitud.
+
+Como punto de partida del algoritmo podemos utilizar por ejemplo la solución de regresión lineal:
+
+```{r}
+m = lm(damage ~ bomber + load + experience, data = d)
+beta_i = coef(m)
+X = model.matrix(m)
+mle = optim(par = beta_i, fn = poisson_logL_optim, y = d$damage, X = X, gr = NULL, method = "BFGS", hessian = TRUE, control = list(trace=1, REPORT = 1, maxit = 200))
+mle$par
+```
+
+## Estimacion con R
+
+```{r}
+d$bomber = factor(d$bomber, labels = c("A4","A6"))
+m2 = glm(damage ~ bomber + load + experience, data = d, family = poisson)
+summary(m2)
+```
