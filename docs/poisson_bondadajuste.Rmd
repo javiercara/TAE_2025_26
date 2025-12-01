@@ -1,13 +1,13 @@
 ---
 title: "Bondad de ajuste"
 output: 
+  pdf_document:
+    number_sections: true
+    toc: true
   html_document:
     number_sections: true
     toc: true
     toc_float: true
-  pdf_document:
-    number_sections: true
-    toc: true
 ---
 
 # Introduccion
@@ -86,18 +86,33 @@ donde $\beta_A$ es un subconjunto de $\beta$. Supongamos que $dim(\beta_A) = m$ 
 
 $$ H_0 : \beta_B = 0, \quad H_1: \beta_B \neq 0 $$
 
-En el caso de que la hipótesis nula sea cierta, se tiene que:
+Para resolver el contraste se utiliza el estadístico
 
 $$
-G = D_A - D_1 \sim \chi^2_{k-m}
+G = D_A - D_1
 $$
 
-donde $D_1$ es la desviación del modelo con parámetros $\beta$ y $D_A$ es la desviación del modelo con parámetros $\beta_A$.
+donde $D_1$ es la desviación del modelo con parámetros $\beta$ y $D_A$ es la desviación del modelo con parámetros $\beta_A$. Se puede demostrar que:
+
+- $D_1 \sim \chi^2_{n-k}$.
+- $D_A \sim \chi^2_{n-m}$.
+
+Por otro lado se cumple que la suma (o resta) de dos $\chi^2$ también tiene distribución $\chi^2$:
+
+\[
+\chi^2_a + \chi^2_b \sim \chi^2_{a+b}
+\]
+
+por lo que la distribución del estadístico $G$ es:
+
+\[ 
+G = D_A - D_1 \sim \chi^2_{(n-m)-(n-k)} = \chi^2_{k-m}
+\]
+
+Si la hipótesis nula es cierta, es decir, $\beta_B = 0$, se cumpliría que $D_1 \approx D_A$, y el estadístico $G$ debería tomar valores pequeños. Por contra, si $\beta_B \neq 0$, el estadístico $G$ debería tomar valores altos. Por tanto:
 
 - Si $G < \chi^2_{\alpha}$ no se rechaza la hipótesis nula.
 - Si $G \geq \chi^2_{\alpha}$ se rechaza la hipótesis nula.
-
-Es decir, valores grandes del estadístico significa que la verosimilitud de ambos modelos es muy diferente, luego $\beta_B \neq 0$. Para valores pequeños de G, ambos modelos son muy parecidos, luego los regresores $\beta_B$ no aportan nada al modelo, es decir, $\beta_B = 0$.
 
 Por ejemplo, queremos resolver el contraste con hipótesis nula $\beta_2 = \beta_3 = 0$:
 

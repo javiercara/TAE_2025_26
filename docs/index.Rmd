@@ -3,12 +3,12 @@ title: "Técnicas Avanzadas de Estadística"
 author: "[Javier Cara](https://www.javiercara.com/)"
 date: "curso 2025-26"
 output: 
+  pdf_document:
+    toc: false
   html_document:
     number_sections: true
     toc: false
     toc_depth: 2
-  pdf_document:
-    toc: false
 ---
 
 <br>
@@ -61,10 +61,8 @@ output:
     b. [Matriz de covarianzas](lm_apendice_covarianzas.html) [(pdf)](lm_apendice_covarianzas.pdf)
     c. [Variable aleatoria normal](lm_apendice_normal.html) [(pdf)](lm_apendice_normal.pdf)
     d. [Distribución t-student](lm_apendice_tn.html) [(pdf)](lm_apendice_tn.pdf)
-    
-## Otros modelos de regresión
 
-### Regresión logística
+## Regresión logística
 
 1. Modelo de regresión logística
     a. [Modelo con un regresor](logit_modelo_1regresor.html) [(pdf)](logit_modelo_1regresor.pdf)
@@ -81,7 +79,7 @@ output:
 6. Apéndices
     a. [Regresión logística binomial](logit_modelo_binomial.html) [(pdf)](logit_modelo_binomial.pdf)
   
-### Regresión de Poisson
+## Regresión de Poisson
 
 1. Modelo de regresión de Poisson
     a. [Modelo](poisson_modelo.html) [(pdf)](poisson_modelo.pdf)
@@ -91,6 +89,16 @@ output:
     a. [Cálculo de predicciones](poisson_aplicaciones_prediccion.html) [(pdf)](poisson_aplicaciones_prediccion.pdf)
 4. Bondad de ajuste
     a. [Bondad del ajuste](poisson_bondadajuste.html) [(pdf)](poisson_bondadajuste.pdf)
+    
+## Árboles de regresión y de clasificación
+
+1. Árboles de regresión
+    a. [Arbol con un regresor](tree_regresion_1regresor.html) [(pdf)](tree_regresion_1regresor.pdf)
+    b. [Arbol con K regresores](tree_regresion_Kregresores.html) [(pdf)](tree_regresion_Kregresores.pdf)
+2. Random Forest   
+    a. [Random Forest](tree_RandomForest.html) [(pdf)](tree_RandomForest.pdf)
+3. Árboles de clasificación
+    a. [Árboles de clasificación](tree_clasificacion.html) [(pdf)](tree_clasificacion.pdf) 
 
 # Bibliografía
 
